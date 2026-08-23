@@ -1,0 +1,247 @@
+{
+  "A_dense_only": {
+    "mode": "dense",
+    "metrics": {
+      "recall_at_1": 0.0333,
+      "recall_at_3": 0.1,
+      "recall_at_5": 0.2,
+      "recall_at_10": 0.3333,
+      "mrr": 0.1032,
+      "document_hit_rate": 0.0333,
+      "page_slide_hit_rate": 0.0,
+      "content_type_hit_rate": 0.0667
+    },
+    "category_metrics": {
+      "basic": {
+        "total": 10,
+        "recall_at_k": 0.2,
+        "recall_at_1": 0.0,
+        "mrr": 0.0583
+      },
+      "operational": {
+        "total": 10,
+        "recall_at_k": 0.3,
+        "recall_at_1": 0.0,
+        "mrr": 0.1204
+      },
+      "multimodal": {
+        "total": 5,
+        "recall_at_k": 0.2,
+        "recall_at_1": 0.2,
+        "mrr": 0.2619
+      },
+      "cross_document": {
+        "total": 5,
+        "recall_at_k": 0.0,
+        "recall_at_1": 0.0,
+        "mrr": 0.0
+      }
+    },
+    "latency_profile": {
+      "avg_total_seconds": 0.9215,
+      "p50_total_seconds": 0.9393,
+      "p95_total_seconds": 1.0817,
+      "avg_embedding_seconds": 0.3622,
+      "avg_qdrant_seconds": 0.5433,
+      "avg_bm25_seconds": 0.0141,
+      "avg_rrf_seconds": 0.002015,
+      "avg_flashrank_seconds": 0.0
+    }
+  },
+  "B_bm25_only": {
+    "mode": "bm25",
+    "metrics": {
+      "recall_at_1": 0.8667,
+      "recall_at_3": 0.9,
+      "recall_at_5": 0.9,
+      "recall_at_10": 0.9667,
+      "mrr": 0.8929,
+      "document_hit_rate": 0.8667,
+      "page_slide_hit_rate": 0.7667,
+      "content_type_hit_rate": 0.8667
+    },
+    "category_metrics": {
+      "basic": {
+        "total": 10,
+        "recall_at_k": 1.0,
+        "recall_at_1": 1.0,
+        "mrr": 1.0
+      },
+      "operational": {
+        "total": 10,
+        "recall_at_k": 1.0,
+        "recall_at_1": 1.0,
+        "mrr": 1.0
+      },
+      "multimodal": {
+        "total": 5,
+        "recall_at_k": 0.8,
+        "recall_at_1": 0.8,
+        "mrr": 0.8286
+      },
+      "cross_document": {
+        "total": 5,
+        "recall_at_k": 0.6,
+        "recall_at_1": 0.4,
+        "mrr": 0.5286
+      }
+    },
+    "latency_profile": {
+      "avg_total_seconds": 1.2012,
+      "p50_total_seconds": 1.0616,
+      "p95_total_seconds": 1.9761,
+      "avg_embedding_seconds": 0.4765,
+      "avg_qdrant_seconds": 0.7147,
+      "avg_bm25_seconds": 0.0087,
+      "avg_rrf_seconds": 0.001256,
+      "avg_flashrank_seconds": 0.0
+    }
+  },
+  "C_dense_bm25_rrf": {
+    "mode": "rrf_only",
+    "metrics": {
+      "recall_at_1": 0.1667,
+      "recall_at_3": 0.8667,
+      "recall_at_5": 0.9,
+      "recall_at_10": 0.9,
+      "mrr": 0.5139,
+      "document_hit_rate": 0.1667,
+      "page_slide_hit_rate": 0.6667,
+      "content_type_hit_rate": 0.8333
+    },
+    "category_metrics": {
+      "basic": {
+        "total": 10,
+        "recall_at_k": 1.0,
+        "recall_at_1": 0.1,
+        "mrr": 0.5167
+      },
+      "operational": {
+        "total": 10,
+        "recall_at_k": 1.0,
+        "recall_at_1": 0.2,
+        "mrr": 0.6
+      },
+      "multimodal": {
+        "total": 5,
+        "recall_at_k": 0.8,
+        "recall_at_1": 0.4,
+        "mrr": 0.6
+      },
+      "cross_document": {
+        "total": 5,
+        "recall_at_k": 0.6,
+        "recall_at_1": 0.0,
+        "mrr": 0.25
+      }
+    },
+    "latency_profile": {
+      "avg_total_seconds": 1.471,
+      "p50_total_seconds": 1.4326,
+      "p95_total_seconds": 1.9687,
+      "avg_embedding_seconds": 0.5841,
+      "avg_qdrant_seconds": 0.8762,
+      "avg_bm25_seconds": 0.0091,
+      "avg_rrf_seconds": 0.001583,
+      "avg_flashrank_seconds": 0.0
+    }
+  },
+  "D_dense_bm25_rrf_flashrank": {
+    "mode": "hybrid",
+    "metrics": {
+      "recall_at_1": 0.8667,
+      "recall_at_3": 0.9333,
+      "recall_at_5": 0.9667,
+      "recall_at_10": 0.9667,
+      "mrr": 0.9067,
+      "document_hit_rate": 0.8667,
+      "page_slide_hit_rate": 0.8333,
+      "content_type_hit_rate": 0.9
+    },
+    "category_metrics": {
+      "basic": {
+        "total": 10,
+        "recall_at_k": 1.0,
+        "recall_at_1": 1.0,
+        "mrr": 1.0
+      },
+      "operational": {
+        "total": 10,
+        "recall_at_k": 1.0,
+        "recall_at_1": 1.0,
+        "mrr": 1.0
+      },
+      "multimodal": {
+        "total": 5,
+        "recall_at_k": 1.0,
+        "recall_at_1": 0.8,
+        "mrr": 0.9
+      },
+      "cross_document": {
+        "total": 5,
+        "recall_at_k": 0.8,
+        "recall_at_1": 0.4,
+        "mrr": 0.54
+      }
+    },
+    "latency_profile": {
+      "avg_total_seconds": 1.132,
+      "p50_total_seconds": 1.1424,
+      "p95_total_seconds": 1.2485,
+      "avg_embedding_seconds": 0.377,
+      "avg_qdrant_seconds": 0.5655,
+      "avg_bm25_seconds": 0.0079,
+      "avg_rrf_seconds": 0.001216,
+      "avg_flashrank_seconds": 0.1804
+    }
+  },
+  "E_full_v2_auto": {
+    "mode": "auto",
+    "metrics": {
+      "recall_at_1": 0.8667,
+      "recall_at_3": 0.9667,
+      "recall_at_5": 0.9667,
+      "recall_at_10": 0.9667,
+      "mrr": 0.9167,
+      "document_hit_rate": 0.8667,
+      "page_slide_hit_rate": 0.8,
+      "content_type_hit_rate": 0.8667
+    },
+    "category_metrics": {
+      "basic": {
+        "total": 10,
+        "recall_at_k": 1.0,
+        "recall_at_1": 1.0,
+        "mrr": 1.0
+      },
+      "operational": {
+        "total": 10,
+        "recall_at_k": 1.0,
+        "recall_at_1": 1.0,
+        "mrr": 1.0
+      },
+      "multimodal": {
+        "total": 5,
+        "recall_at_k": 1.0,
+        "recall_at_1": 0.8,
+        "mrr": 0.9
+      },
+      "cross_document": {
+        "total": 5,
+        "recall_at_k": 0.8,
+        "recall_at_1": 0.4,
+        "mrr": 0.6
+      }
+    },
+    "latency_profile": {
+      "avg_total_seconds": 1.7252,
+      "p50_total_seconds": 1.3084,
+      "p95_total_seconds": 3.1906,
+      "avg_embedding_seconds": 0.4581,
+      "avg_qdrant_seconds": 0.6872,
+      "avg_bm25_seconds": 0.0096,
+      "avg_rrf_seconds": 0.001012,
+      "avg_flashrank_seconds": 0.5692
+    }
+  }
+}

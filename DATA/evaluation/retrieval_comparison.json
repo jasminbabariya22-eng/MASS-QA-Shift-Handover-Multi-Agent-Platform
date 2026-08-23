@@ -1,0 +1,86 @@
+{
+  "summary_comparison": {
+    "recall_at_1": {
+      "v1": 0.0333,
+      "v2": 0.4,
+      "improvement": 0.3667
+    },
+    "recall_at_3": {
+      "v1": 0.1,
+      "v2": 0.8,
+      "improvement": 0.7
+    },
+    "recall_at_5": {
+      "v1": 0.2,
+      "v2": 0.8,
+      "improvement": 0.6
+    },
+    "recall_at_10": {
+      "v1": 0.3333,
+      "v2": 0.8,
+      "improvement": 0.4667
+    },
+    "mrr": {
+      "v1": 0.1032,
+      "v2": 0.6,
+      "improvement": 0.4968
+    },
+    "document_hit_rate": {
+      "v1": 0.0333,
+      "v2": 0.4,
+      "improvement": 0.3667
+    },
+    "page_slide_hit_rate": {
+      "v1": 0.0,
+      "v2": 0.6,
+      "improvement": 0.6
+    },
+    "content_type_hit_rate": {
+      "v1": 0.0667,
+      "v2": 0.8,
+      "improvement": 0.7333
+    }
+  },
+  "critical_queries": {
+    "Q026": {
+      "question": "How do Indian energy sector expansion plans in PNGRB overview compare with National Electricity Plan 2018 targets?",
+      "expected_document": "PNGRB Overview of Oil and Gas Sector.pdf",
+      "v1_rank": null,
+      "v2_rank": 1,
+      "v1_score": 0.0617,
+      "v2_score": 0.9977,
+      "v1_document": "nep_jan_2018.pdf",
+      "v2_document": "PNGRB Overview of Oil and Gas Sector.pdf"
+    },
+    "Q030": {
+      "question": "How does Indian crude oil refining and infrastructure development in KPMG report align with PNGRB regulatory policy?",
+      "expected_document": "KPMG Oil & Gas scenario in India.pdf",
+      "v1_rank": null,
+      "v2_rank": null,
+      "v1_score": 0.0525,
+      "v2_score": 0.7764,
+      "v1_document": "nep_jan_2018.pdf",
+      "v2_document": "IEA Oil Market Report.pdf"
+    }
+  },
+  "v1_latency": {
+    "avg_total_seconds": 0.7896,
+    "p50_total_seconds": 0.7816,
+    "p95_total_seconds": 0.8482,
+    "avg_embedding_seconds": 0.5332,
+    "avg_qdrant_seconds": 0.2564,
+    "avg_bm25_seconds": 0.0,
+    "avg_rrf_seconds": 0.0,
+    "avg_flashrank_seconds": 0.0
+  },
+  "v2_latency": {
+    "avg_total_seconds": 3.1046,
+    "p50_total_seconds": 2.901,
+    "p95_total_seconds": 3.823,
+    "avg_embedding_seconds": 0.4086,
+    "avg_qdrant_seconds": 0.6129,
+    "avg_bm25_seconds": 0.0111,
+    "avg_rrf_seconds": 0.020151,
+    "avg_flashrank_seconds": 2.0519
+  }
+}

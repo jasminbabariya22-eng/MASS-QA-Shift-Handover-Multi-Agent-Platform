@@ -1,0 +1,84 @@
+{
+  "run_id": "run-8e301d4b",
+  "started_at": "2026-08-15T15:50:18.498448",
+  "completed_at": "2026-08-15T20:06:50.662359",
+  "duration_seconds": 15392.16,
+  "collection": "mass_qa_multimodal",
+  "statistics": {
+    "documents": 10,
+    "pdf_count": 8,
+    "pptx_count": 2,
+    "pages": 792,
+    "slides": 106,
+    "text_elements": 23316,
+    "tables": 340,
+    "images": 1098,
+    "charts": 0,
+    "diagrams": 0,
+    "chunks": 24754,
+    "indexed_vectors": 0,
+    "failed_documents": 0
+  },
+  "documents": [
+    {
+      "document_name": "5.1_petroleum_refining.pdf",
+      "document_id": "DOC-6dd2092b2d39",
+      "status": "failed_indexing",
+      "error": "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Wrong input: Vector dimension error: expected dim: 3072, got 768\"},\"time\":0.000028948}'"
+    },
+    {
+      "document_name": "EIA Trends in U.S. Oil and Natural Gas Upstream Costs.pdf",
+      "document_id": "DOC-4cf9a3e6d672",
+      "status": "failed_indexing",
+      "error": "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Wrong input: Vector dimension error: expected dim: 3072, got 768\"},\"time\":0.000030302}'"
+    },
+    {
+      "document_name": "GS OIL AND GAS PROCESSING FACILITIES.pdf",
+      "document_id": "DOC-b74fcf48d16c",
+      "status": "failed_indexing",
+      "error": "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Wrong input: Vector dimension error: expected dim: 3072, got 768\"},\"time\":0.000031016}'"
+    },
+    {
+      "document_name": "Guidelines for Good Governance in EMERGING OIL AND GAS PRODUCTION.pptx",
+      "document_id": "DOC-3e8e7924c731",
+      "status": "failed_indexing",
+      "error": "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Wrong input: Vector dimension error: expected dim: 3072, got 768\"},\"time\":0.000031828}'"
+    },
+    {
+      "document_name": "IEA INTERNATIONAL ENERGY AGENCY.pdf",
+      "document_id": "DOC-6f0845889562",
+      "status": "failed_indexing",
+      "error": "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Wrong input: Vector dimension error: expected dim: 3072, got 768\"},\"time\":0.000032346}'"
+    },
+    {
+      "document_name": "IEA Oil Market Report.pdf",
+      "document_id": "DOC-c0d10643b623",
+      "status": "failed_indexing",
+      "error": "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Wrong input: Vector dimension error: expected dim: 3072, got 768\"},\"time\":0.000028841}'"
+    },
+    {
+      "document_name": "KPMG Oil & Gas scenario in India.pdf",
+      "document_id": "DOC-1a381654db8a",
+      "status": "failed_indexing",
+      "error": "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Wrong input: Vector dimension error: expected dim: 3072, got 768\"},\"time\":0.000031311}'"
+    },
+    {
+      "document_name": "nep_jan_2018.pdf",
+      "document_id": "DOC-b2f980d58034",
+      "status": "failed_indexing",
+      "error": "[Errno 11001] getaddrinfo failed"
+    },
+    {
+      "document_name": "Oil and Natural Gas Sector.pptx",
+      "document_id": "DOC-6e49c3a32b89",
+      "status": "failed_indexing",
+      "error": "[Errno 11001] getaddrinfo failed"
+    },
+    {
+      "document_name": "PNGRB Overview of Oil and Gas Sector.pdf",
+      "document_id": "DOC-e37288a1d03d",
+      "status": "failed_indexing",
+      "error": "Unexpected Response: 400 (Bad Request)\nRaw response content:\nb'{\"status\":{\"error\":\"Wrong input: Vector dimension error: expected dim: 3072, got 768\"},\"time\":0.000030293}'"
+    }
+  ]
+}

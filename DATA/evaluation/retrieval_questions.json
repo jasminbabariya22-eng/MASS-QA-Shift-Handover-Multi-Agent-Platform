@@ -1,0 +1,272 @@
+[
+  {
+    "id": "Q001",
+    "category": "basic",
+    "question": "What are the primary auxiliary refinery processes including cooling towers, blowdown systems, and compressor engines?",
+    "expected_document": "5.1_petroleum_refining.pdf",
+    "expected_page": 3,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q002",
+    "category": "basic",
+    "question": "What production capacity addition is scheduled for the Berri and Marjan megaprojects by 2025?",
+    "expected_document": "IEA INTERNATIONAL ENERGY AGENCY.pdf",
+    "expected_page": 57,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q003",
+    "category": "basic",
+    "question": "What expectations did the IHS report foresee regarding global oil oversupply and upstream costs in 2016?",
+    "expected_document": "EIA Trends in U.S. Oil and Natural Gas Upstream Costs.pdf",
+    "expected_page": 4,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q004",
+    "category": "basic",
+    "question": "What recommendations does Chatham House provide for emerging producers regarding Good Governance guidelines?",
+    "expected_document": "Guidelines for Good Governance in EMERGING OIL AND GAS PRODUCTION.pptx",
+    "expected_page": null,
+    "expected_slide": 3,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q005",
+    "category": "basic",
+    "question": "What regulatory history and emissions sources were covered under NSPS OOOO in 2012 and 2016?",
+    "expected_document": "Oil and Natural Gas Sector.pptx",
+    "expected_page": null,
+    "expected_slide": 6,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q006",
+    "category": "basic",
+    "question": "What is the expected Indonesian oil production forecast by the end of the period according to IEA?",
+    "expected_document": "IEA INTERNATIONAL ENERGY AGENCY.pdf",
+    "expected_page": 82,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q007",
+    "category": "basic",
+    "question": "What provisions does Executive Order 13990 contain regarding public health and oil and natural gas emissions standards?",
+    "expected_document": "Oil and Natural Gas Sector.pptx",
+    "expected_page": null,
+    "expected_slide": 7,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q008",
+    "category": "basic",
+    "question": "What are the key policy recommendations for incremental governance improvement in new petroleum producer countries?",
+    "expected_document": "Guidelines for Good Governance in EMERGING OIL AND GAS PRODUCTION.pptx",
+    "expected_page": null,
+    "expected_slide": 4,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q009",
+    "category": "basic",
+    "question": "What is the role of the New Petroleum Producers Discussion Group established by Chatham House?",
+    "expected_document": "Guidelines for Good Governance in EMERGING OIL AND GAS PRODUCTION.pptx",
+    "expected_page": null,
+    "expected_slide": 2,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q010",
+    "category": "basic",
+    "question": "What is Clean Air Act Section 111 authority regarding emissions standards for the oil and natural gas sector?",
+    "expected_document": "Oil and Natural Gas Sector.pptx",
+    "expected_page": null,
+    "expected_slide": 5,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q011",
+    "category": "operational",
+    "question": "What atmospheric distillation and vacuum distillation operating parameters affect refinery emissions?",
+    "expected_document": "5.1_petroleum_refining.pdf",
+    "expected_page": 3,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q012",
+    "category": "operational",
+    "question": "How are equipment reliability measures calculated using asset availability percentage and 28-day plan compliance in processing facilities?",
+    "expected_document": "GS OIL AND GAS PROCESSING FACILITIES.pdf",
+    "expected_page": 32,
+    "expected_slide": null,
+    "expected_content_type": "table"
+  },
+  {
+    "id": "Q013",
+    "category": "operational",
+    "question": "What operational factors drove U.S. onshore drilling and completion cost trends between 2006 and 2015?",
+    "expected_document": "EIA Trends in U.S. Oil and Natural Gas Upstream Costs.pdf",
+    "expected_page": 4,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q014",
+    "category": "operational",
+    "question": "What processes are involved in catalytic cracking and hydrotreating operations in oil refining?",
+    "expected_document": "5.1_petroleum_refining.pdf",
+    "expected_page": 3,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q015",
+    "category": "operational",
+    "question": "What process steps are outlined for gas processing facilities operational maintenance and safety compliance?",
+    "expected_document": "GS OIL AND GAS PROCESSING FACILITIES.pdf",
+    "expected_page": 32,
+    "expected_slide": null,
+    "expected_content_type": "table"
+  },
+  {
+    "id": "Q016",
+    "category": "operational",
+    "question": "How do upstream cost trends vary between offshore deepwater projects and onshore unconventional shale plays?",
+    "expected_document": "EIA Trends in U.S. Oil and Natural Gas Upstream Costs.pdf",
+    "expected_page": 55,
+    "expected_slide": null,
+    "expected_content_type": "diagram"
+  },
+  {
+    "id": "Q017",
+    "category": "operational",
+    "question": "What outreach and consultation procedures were used for Small Entity Representatives under CAA Section 111?",
+    "expected_document": "Oil and Natural Gas Sector.pptx",
+    "expected_page": null,
+    "expected_slide": 4,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q018",
+    "category": "operational",
+    "question": "What operational metrics are tracked for thermal power station proposals such as Panki TPS and Kothagudem TPS?",
+    "expected_document": "nep_jan_2018.pdf",
+    "expected_page": 159,
+    "expected_slide": null,
+    "expected_content_type": "table"
+  },
+  {
+    "id": "Q019",
+    "category": "operational",
+    "question": "What capacity expansions are planned for upstream crude oil supply from Saudi Arabia and UAE megaprojects?",
+    "expected_document": "IEA INTERNATIONAL ENERGY AGENCY.pdf",
+    "expected_page": 57,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q020",
+    "category": "operational",
+    "question": "What are the regulatory compliance timelines for new source performance standards in oil and gas production?",
+    "expected_document": "Oil and Natural Gas Sector.pptx",
+    "expected_page": null,
+    "expected_slide": 6,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q021",
+    "category": "multimodal",
+    "question": "What investment figures are pledged for renewable energy sources in the Indian energy sector table?",
+    "expected_document": "PNGRB Overview of Oil and Gas Sector.pdf",
+    "expected_page": 9,
+    "expected_slide": null,
+    "expected_content_type": "table"
+  },
+  {
+    "id": "Q022",
+    "category": "multimodal",
+    "question": "What details are listed in the thermal power plant proposal table for UPRVUNL Panki TPS Unit 4?",
+    "expected_document": "nep_jan_2018.pdf",
+    "expected_page": 159,
+    "expected_slide": null,
+    "expected_content_type": "table"
+  },
+  {
+    "id": "Q023",
+    "category": "multimodal",
+    "question": "What operational availability percentage measures are specified in the equipment reliability table?",
+    "expected_document": "GS OIL AND GAS PROCESSING FACILITIES.pdf",
+    "expected_page": 32,
+    "expected_slide": null,
+    "expected_content_type": "table"
+  },
+  {
+    "id": "Q024",
+    "category": "multimodal",
+    "question": "What visual header and branding elements are shown on page 1 of the PNGRB Overview document?",
+    "expected_document": "PNGRB Overview of Oil and Gas Sector.pdf",
+    "expected_page": 1,
+    "expected_slide": null,
+    "expected_content_type": "diagram"
+  },
+  {
+    "id": "Q025",
+    "category": "multimodal",
+    "question": "What visual design and document title layout is presented on the title page of the IEA report?",
+    "expected_document": "IEA INTERNATIONAL ENERGY AGENCY.pdf",
+    "expected_page": 1,
+    "expected_slide": null,
+    "expected_content_type": "diagram"
+  },
+  {
+    "id": "Q026",
+    "category": "cross_document",
+    "question": "How do Indian energy sector expansion plans in PNGRB overview compare with National Electricity Plan 2018 targets?",
+    "expected_document": "PNGRB Overview of Oil and Gas Sector.pdf",
+    "expected_page": 9,
+    "expected_slide": null,
+    "expected_content_type": "table"
+  },
+  {
+    "id": "Q027",
+    "category": "cross_document",
+    "question": "How do global oil supply growth projections from IEA compare with U.S. upstream cost trends analyzed by EIA?",
+    "expected_document": "EIA Trends in U.S. Oil and Natural Gas Upstream Costs.pdf",
+    "expected_page": 4,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q028",
+    "category": "cross_document",
+    "question": "How do U.S. EPA NSPS regulations for VOC emissions align with Good Governance guidelines for emerging producers?",
+    "expected_document": "Oil and Natural Gas Sector.pptx",
+    "expected_page": null,
+    "expected_slide": 6,
+    "expected_content_type": "slide"
+  },
+  {
+    "id": "Q029",
+    "category": "cross_document",
+    "question": "How do processing facility equipment availability standards relate to refinery process unit operations?",
+    "expected_document": "5.1_petroleum_refining.pdf",
+    "expected_page": 3,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  },
+  {
+    "id": "Q030",
+    "category": "cross_document",
+    "question": "How does Indian crude oil refining and infrastructure development in KPMG report align with PNGRB regulatory policy?",
+    "expected_document": "KPMG Oil & Gas scenario in India.pdf",
+    "expected_page": 18,
+    "expected_slide": null,
+    "expected_content_type": "text"
+  }
+]

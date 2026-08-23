@@ -1,0 +1,63 @@
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+genv/
+tenvv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Secrets & Environment Variables
+.env
+.env.*
+!.env.example
+enterprise_env
+
+# Testing & Cache
+.pytest_cache/
+.coverage
+htmlcov/
+.logfire/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# IDEs & System Files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Archives & Temporary Artifacts
+*.zip
+*.tar.gz
+*.log
+logs/
+
+# Local Vector Store / Caches
+index.faiss
+metadata.pkl
+DATA/cache/
+
+# Agent IDE memory & session data
+.claude/
+.system_generated/
+commands.md

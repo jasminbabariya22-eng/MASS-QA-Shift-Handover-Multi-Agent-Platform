@@ -1,0 +1,7 @@
+{
+  "collection_name": "mass_qa_multimodal",
+  "total_documents": 2079,
+  "created_at": "2026-08-22T10:25:20.715953",
+  "index_file": "index.pkl",
+  "corpus_version": "v2.0"
+}

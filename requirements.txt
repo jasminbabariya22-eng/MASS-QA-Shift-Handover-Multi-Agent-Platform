@@ -1,0 +1,43 @@
+# --- Web & API ---
+fastapi
+uvicorn[standard]
+pydantic>=2.0.0
+python-dotenv
+requests
+streamlit
+
+# --- Observability ---
+logfire[fastapi,requests]
+loguru
+
+# --- Agent & LLM Gateway ---
+langchain
+langgraph
+langchain-groq
+langchain-openai
+langchain-google-genai
+google-generativeai
+portkey-ai
+nemoguardrails
+
+# --- Vector DB & Retrieval ---
+qdrant-client
+flashrank
+sentence-transformers
+
+# --- Document Parsers ---
+pypdf
+pdfplumber
+beautifulsoup4
+python-docx
+python-pptx
+docling
+# --- Database & Persistence ---
+sqlalchemy>=2.0
+alembic
+psycopg2-binary
+redis
+
+# --- Security & Streaming ---
+pyjwt
+sse-starlette
