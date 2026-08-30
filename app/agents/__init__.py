@@ -27,6 +27,13 @@ from app.agents.shift import (
     shift_workflow_engine,
 )
 
+from app.agents.p2p import (
+    p2p_negotiate,
+    PeerExchangeChannel,
+    P2PMessage,
+    P2PSessionState,
+)
+
 __all__ = [
     "AgentIntent",
     "RiskLevel",
@@ -58,5 +65,10 @@ __all__ = [
     "ShiftHandoverAction",
     "ShiftHandoverWorkflowEngine",
     "shift_workflow_engine",
+    "p2p_negotiate",
+    "PeerExchangeChannel",
+    "P2PMessage",
+    "P2PSessionState",
 ]
+
 

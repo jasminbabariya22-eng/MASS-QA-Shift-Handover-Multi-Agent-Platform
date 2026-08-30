@@ -133,72 +133,38 @@ class AgentOrchestrator:
                 }
             )
 
-        # 3. Multi-Agent Coordination (Shift Handover + QA)
+        # 3. Multi-Agent Coordination via Bidirectional P2P Peer Exchange
         if intent == AgentIntent.MULTI_AGENT:
-            targets = context.target_agents or ["shift_handover_agent", "qa_technical_agent"]
-            shift_agent = agent_registry.get("shift_handover_agent") if "shift_handover_agent" in targets else None
-            partner_agent_id = "qa_technical_agent"
-            partner_agent = agent_registry.get("qa_technical_agent")
+            from app.agents.p2p import p2p_negotiate
+            try:
+                return p2p_negotiate(
+                    agent_a_id="shift_handover_agent",
+                    agent_b_id="qa_technical_agent",
+                    initial_request=request,
+                    context=context,
+                    max_turns=4
+                )
+            except Exception as e:
+                logfire.warning(f"[Orchestrator] P2P Peer Exchange fallback: {e}")
+                # Fallback to standard execution if P2P fails
+                shift_agent = agent_registry.get("shift_handover_agent")
+                partner_agent = agent_registry.get("qa_technical_agent")
 
-            
-            shift_response_part = ""
-            if shift_agent:
-                try:
-                    s_res = shift_agent.execute(request, context)
-                    shift_response_part = s_res.response
-                except Exception as e:
-                    shift_response_part = f"ℹ️ *[Shift Handover]*: Unable to process shift log action ({str(e)})."
-            
-            citations = []
-            partner_response_part = ""
-            if partner_agent:
-                try:
-                    p_res = partner_agent.execute(request, context)
-                    partner_response_part = p_res.response
-                    citations = p_res.citations
-                except Exception as e:
-                    partner_response_part = f"⚠️ *[{partner_agent.name}]*: Knowledge retrieval unavailable ({str(e)})."
+                shift_response_part = shift_agent.execute(request, context).response if shift_agent else ""
+                p_res = partner_agent.execute(request, context) if partner_agent else None
 
-            partner_title = "Standard Operating Procedure (SOP) Reference"
-            composite_msg = (
-                f"{shift_response_part}\n\n"
-                f"**{partner_title}:**\n{partner_response_part}"
-            ) if shift_response_part else partner_response_part
-
-
-            return AgentResult(
-                request_id=request.request_id,
-                agent_id="orchestrator_multi_agent",
-                status="success",
-                success=True,
-                response=composite_msg,
-                citations=citations,
-                confidence="high",
-                query_type="multi_agent_composite",
-                grounded=True,
-                execution_time_ms=round((time.time() - t_start) * 1000, 2),
-                metadata={
-                    "coordinated_agents": ["shift_handover_agent", partner_agent_id],
-                    "a2a_trace": [
-                        {
-                            "step": 1,
-                            "source": "Agent Orchestrator",
-                            "target": "Shift Handover Agent",
-                            "task": "SHIFT_HANDOVER_TRANSACTION",
-                            "description": "Processed operational log & unit equipment state in PostgreSQL",
-                            "status": "COMPLETED"
-                        },
-                        {
-                            "step": 2,
-                            "source": "Shift Handover Agent",
-                            "target": partner_agent.name if partner_agent else partner_agent_id,
-                            "task": "ENGINEERING_KNOWLEDGE_RETRIEVAL",
-                            "description": f"Retrieved authoritative engineering specifications & citations via {partner_agent_id}",
-                            "status": "COMPLETED"
-                        }
-                    ]
-                }
-            )
+                return AgentResult(
+                    request_id=request.request_id,
+                    agent_id="orchestrator_multi_agent",
+                    status="success",
+                    success=True,
+                    response=f"{shift_response_part}\n\n**Standard Operating Procedure (SOP) Reference:**\n{p_res.response if p_res else ''}",
+                    citations=p_res.citations if p_res else [],
+                    confidence="high",
+                    query_type="multi_agent_composite",
+                    grounded=True,
+                    execution_time_ms=round((time.time() - t_start) * 1000, 2)
+                )
 
         # 4. Standard Agent Execution
         agent_id = context.current_agent or "qa_technical_agent"
