@@ -10,7 +10,7 @@ class HarnessPermissionManager:
     Ensures agents and users only access capabilities they are explicitly authorized for.
     """
 
-    # Role Permissions
+    # All 10 Refinery Domain Operational Roles
     ROLE_PERMISSIONS: Dict[str, Set[ToolPermission]] = {
         "CONSOLE_OPERATOR": {
             ToolPermission.RETRIEVE_DOCUMENT,
@@ -36,6 +36,23 @@ class HarnessPermissionManager:
             ToolPermission.READ_INSTRUMENT,
             ToolPermission.READ_ENGINEERING_DOCUMENT
         },
+        "OUTGOING_OPERATOR": {
+            ToolPermission.RETRIEVE_DOCUMENT,
+            ToolPermission.SEARCH_KNOWLEDGE_BASE,
+            ToolPermission.CREATE_HANDOVER,
+            ToolPermission.READ_HANDOVER,
+            ToolPermission.UPDATE_HANDOVER,
+            ToolPermission.TRANSITION_HANDOVER,
+            ToolPermission.MANAGE_SAFETY_ITEMS
+        },
+        "INCOMING_OPERATOR": {
+            ToolPermission.RETRIEVE_DOCUMENT,
+            ToolPermission.SEARCH_KNOWLEDGE_BASE,
+            ToolPermission.READ_HANDOVER,
+            ToolPermission.TRANSITION_HANDOVER,
+            ToolPermission.READ_LOOP,
+            ToolPermission.READ_INSTRUMENT
+        },
         "SHIFT_SUPERVISOR": {
             ToolPermission.RETRIEVE_DOCUMENT,
             ToolPermission.SEARCH_KNOWLEDGE_BASE,
@@ -52,16 +69,6 @@ class HarnessPermissionManager:
             ToolPermission.READ_ENGINEERING_DOCUMENT,
             ToolPermission.VALIDATE_LOOP
         },
-        "INCOMING_OPERATOR": {
-            ToolPermission.RETRIEVE_DOCUMENT,
-            ToolPermission.SEARCH_KNOWLEDGE_BASE,
-            ToolPermission.GENERATE_GROUNDED_ANSWER,
-            ToolPermission.READ_HANDOVER,
-            ToolPermission.TRANSITION_HANDOVER,
-            ToolPermission.READ_LOOP,
-            ToolPermission.READ_INSTRUMENT,
-            ToolPermission.READ_ENGINEERING_DOCUMENT
-        },
         "OPERATIONS_ENGINEER": {
             ToolPermission.RETRIEVE_DOCUMENT,
             ToolPermission.SEARCH_KNOWLEDGE_BASE,
@@ -72,6 +79,33 @@ class HarnessPermissionManager:
             ToolPermission.READ_INSTRUMENT,
             ToolPermission.READ_IO_MAPPING,
             ToolPermission.READ_ENGINEERING_DOCUMENT,
+            ToolPermission.VALIDATE_LOOP
+        },
+        "MAINTENANCE_LEAD": {
+            ToolPermission.RETRIEVE_DOCUMENT,
+            ToolPermission.READ_HANDOVER,
+            ToolPermission.UPDATE_HANDOVER,
+            ToolPermission.MANAGE_SAFETY_ITEMS,
+            ToolPermission.READ_INSTRUMENT
+        },
+        "HSE_REPRESENTATIVE": {
+            ToolPermission.RETRIEVE_DOCUMENT,
+            ToolPermission.SEARCH_KNOWLEDGE_BASE,
+            ToolPermission.READ_HANDOVER,
+            ToolPermission.READ_AUDIT,
+            ToolPermission.MANAGE_SAFETY_ITEMS
+        },
+        "PLANT_MANAGER": {
+            ToolPermission.RETRIEVE_DOCUMENT,
+            ToolPermission.SEARCH_KNOWLEDGE_BASE,
+            ToolPermission.GENERATE_GROUNDED_ANSWER,
+            ToolPermission.CREATE_HANDOVER,
+            ToolPermission.READ_HANDOVER,
+            ToolPermission.UPDATE_HANDOVER,
+            ToolPermission.TRANSITION_HANDOVER,
+            ToolPermission.READ_AUDIT,
+            ToolPermission.MANAGE_SAFETY_ITEMS,
+            ToolPermission.READ_LOOP,
             ToolPermission.VALIDATE_LOOP
         },
         "ADMIN": {
@@ -89,7 +123,6 @@ class HarnessPermissionManager:
             ToolPermission.READ_IO_MAPPING,
             ToolPermission.READ_ENGINEERING_DOCUMENT,
             ToolPermission.VALIDATE_LOOP
-            # NOTE: REMOTE_EQUIPMENT_CONTROL is strictly NOT granted to ADMIN either
         }
     }
 

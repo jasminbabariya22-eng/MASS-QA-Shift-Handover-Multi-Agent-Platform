@@ -164,14 +164,20 @@ class TokenRequest(BaseModel):
 
 
 class UserCredentialStore:
-    """Pre-seeded user database dictionary mapping login credentials to operational roles."""
+    """Pre-seeded user database dictionary mapping login credentials to all 10 operational roles."""
     USERS = {
         "op_console_1": {"password": "pass123", "role": "CONSOLE_OPERATOR", "name": "Console Operator 1"},
         "op_field_1": {"password": "pass123", "role": "FIELD_OPERATOR", "name": "Field Operator 1"},
+        "op_outgoing_1": {"password": "pass123", "role": "OUTGOING_OPERATOR", "name": "Outgoing Operator 1"},
+        "op_incoming_1": {"password": "pass123", "role": "INCOMING_OPERATOR", "name": "Incoming Operator 1"},
         "sup_shift_1": {"password": "pass123", "role": "SHIFT_SUPERVISOR", "name": "Shift Supervisor 1"},
+        "eng_ops_1": {"password": "pass123", "role": "OPERATIONS_ENGINEER", "name": "Operations Engineer 1"},
+        "maint_lead_1": {"password": "pass123", "role": "MAINTENANCE_LEAD", "name": "Maintenance Lead 1"},
+        "hse_rep_1": {"password": "pass123", "role": "HSE_REPRESENTATIVE", "name": "HSE Auditor 1"},
         "mgr_plant_1": {"password": "pass123", "role": "PLANT_MANAGER", "name": "Plant Manager 1"},
         "admin_1": {"password": "pass123", "role": "ADMIN", "name": "System Administrator"}
     }
+
 
     @classmethod
     def authenticate(cls, login_id: str, password: str = "pass123", fallback_role: Optional[str] = None) -> Tuple[str, str]:

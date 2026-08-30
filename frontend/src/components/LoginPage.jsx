@@ -2,11 +2,16 @@ import React, { useState } from 'react';
 import { Shield, Key, User, Lock, Activity, CheckCircle2, AlertTriangle } from 'lucide-react';
 
 const ROLES = [
-  { id: 'CONSOLE_OPERATOR', label: 'Console Operator', desc: 'Standard shift logging & SOP search' },
-  { id: 'SHIFT_SUPERVISOR', label: 'Shift Supervisor', desc: 'Full shift approval & HITL sign-off' },
-  { id: 'PLANT_MANAGER', label: 'Plant Manager', desc: 'Executive oversight & emergency override' },
-  { id: 'OPERATIONS_ENGINEER', label: 'Operations Engineer', desc: 'Technical specs & unit diagnostics' },
-  { id: 'ADMIN', label: 'System Administrator', desc: 'Full system RBAC administration' }
+  { id: 'CONSOLE_OPERATOR', label: 'Console Operator', desc: 'Panel console shift logging & SOP search' },
+  { id: 'FIELD_OPERATOR', label: 'Field Operator', desc: 'Plant walkdown notes & equipment inspection' },
+  { id: 'OUTGOING_OPERATOR', label: 'Outgoing Operator', desc: 'Prepares shift turnover draft & LOTO isolations' },
+  { id: 'INCOMING_OPERATOR', label: 'Incoming Operator', desc: 'Inspects turnover record & acknowledges risks' },
+  { id: 'SHIFT_SUPERVISOR', label: 'Shift Supervisor', desc: 'Full shift approval & HITL safety sign-off' },
+  { id: 'OPERATIONS_ENGINEER', label: 'Operations Engineer', desc: 'Safe operating limit (SOL) diagnostics' },
+  { id: 'MAINTENANCE_LEAD', label: 'Maintenance Lead', desc: 'Work order updates & LOTO verification' },
+  { id: 'HSE_REPRESENTATIVE', label: 'HSE Representative', desc: 'Safety compliance & emissions auditing' },
+  { id: 'PLANT_MANAGER', label: 'Plant Manager', desc: 'Executive plant oversight & emergency override' },
+  { id: 'ADMIN', label: 'System Administrator', desc: 'Full system & AI Harness RBAC administration' }
 ];
 
 export default function LoginPage({ onLogin, backendUrl }) {
@@ -64,7 +69,7 @@ export default function LoginPage({ onLogin, backendUrl }) {
       background: 'radial-gradient(circle at 50% 30%, #1E1B4B 0%, #0B0F19 70%)',
       padding: '20px'
     }}>
-      <div style={{ width: '100%', maxWidth: '440px' }} className="glass-card">
+      <div style={{ width: '100%', maxWidth: '480px' }} className="glass-card">
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <div style={{
@@ -81,7 +86,7 @@ export default function LoginPage({ onLogin, backendUrl }) {
             MASS Operations Portal
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
-            Oil & Gas Refinery Database Login & RBAC Control
+            10 Operational Roles — Database Credentials & RBAC
           </p>
         </div>
 
@@ -106,20 +111,42 @@ export default function LoginPage({ onLogin, backendUrl }) {
         {/* Demo Accounts Preset Buttons */}
         <div style={{ marginBottom: '16px', padding: '10px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 6 }}>
-            🔑 Select Demo Account Credentials:
+            🔑 Select Demo Account (10 Operational Roles):
           </div>
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
-            <button type="button" onClick={() => setPresetUser('op_console_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.72rem', padding: '4px 8px' }}>
-              op_console_1 (Operator)
+            <button type="button" onClick={() => setPresetUser('op_console_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
+              op_console_1 (Console)
             </button>
-            <button type="button" onClick={() => setPresetUser('sup_shift_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.72rem', padding: '4px 8px' }}>
+            <button type="button" onClick={() => setPresetUser('op_field_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
+              op_field_1 (Field)
+            </button>
+            <button type="button" onClick={() => setPresetUser('op_outgoing_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
+              op_outgoing_1 (Outgoing)
+            </button>
+            <button type="button" onClick={() => setPresetUser('op_incoming_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
+              op_incoming_1 (Incoming)
+            </button>
+            <button type="button" onClick={() => setPresetUser('sup_shift_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
               sup_shift_1 (Supervisor)
             </button>
-            <button type="button" onClick={() => setPresetUser('mgr_plant_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.72rem', padding: '4px 8px' }}>
+            <button type="button" onClick={() => setPresetUser('eng_ops_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
+              eng_ops_1 (Engineer)
+            </button>
+            <button type="button" onClick={() => setPresetUser('maint_lead_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
+              maint_lead_1 (Maintenance)
+            </button>
+            <button type="button" onClick={() => setPresetUser('hse_rep_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
+              hse_rep_1 (HSE Auditor)
+            </button>
+            <button type="button" onClick={() => setPresetUser('mgr_plant_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
               mgr_plant_1 (Manager)
+            </button>
+            <button type="button" onClick={() => setPresetUser('admin_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
+              admin_1 (Admin)
             </button>
           </div>
         </div>
+
 
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
