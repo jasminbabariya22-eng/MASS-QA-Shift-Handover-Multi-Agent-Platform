@@ -7,8 +7,8 @@ const STARTER_PROMPTS = [
   { label: 'Emergency Pump P-101 Shutdown Test', query: 'Shut down pump P-101 immediately' }
 ];
 
-export default function QAChatTab({ backendUrl, token, sessionId }) {
-  const [messages, setMessages] = useState([]);
+export default function QAChatTab({ backendUrl, token, sessionId, initialMessages = [], onUpdateMessages }) {
+  const [messages, setMessages] = useState(initialMessages);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
   const [recordingVoice, setRecordingVoice] = useState(false);
@@ -16,6 +16,19 @@ export default function QAChatTab({ backendUrl, token, sessionId }) {
   const messagesEndRef = useRef(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+
+  useEffect(() => {
+    setMessages(initialMessages || []);
+  }, [sessionId]);
+
+
+  const updateAndNotify = (newMsgs, promptText = '') => {
+    setMessages(newMsgs);
+    if (onUpdateMessages) {
+      onUpdateMessages(newMsgs, promptText);
+    }
+  };
+
 
   const startVoiceRecording = async () => {
     setRecordingVoice(true);
@@ -214,15 +227,21 @@ export default function QAChatTab({ backendUrl, token, sessionId }) {
         }
       }
 
+      let finalMsgs = [];
       setMessages((prev) => {
         const copy = [...prev];
         copy[copy.length - 1] = {
           ...copy[copy.length - 1],
           streaming: false
         };
+        finalMsgs = copy;
         return copy;
       });
+      if (onUpdateMessages) {
+        onUpdateMessages(finalMsgs, q);
+      }
     } catch (err) {
+      let errMsgs = [];
       setMessages((prev) => {
         const copy = [...prev];
         copy[copy.length - 1] = {
@@ -230,12 +249,17 @@ export default function QAChatTab({ backendUrl, token, sessionId }) {
           content: `⚠️ Connection Error: ${err.message}`,
           streaming: false
         };
+        errMsgs = copy;
         return copy;
       });
+      if (onUpdateMessages) {
+        onUpdateMessages(errMsgs, q);
+      }
     } finally {
       setStreaming(false);
     }
   };
+
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>

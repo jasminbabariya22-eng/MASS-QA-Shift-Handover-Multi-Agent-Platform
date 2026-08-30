@@ -12,26 +12,113 @@ const BACKEND_URL = 'http://localhost:8000';
 
 export default function App() {
   const [auth, setAuth] = useState(null);
-  const [sessionId, setSessionId] = useState('');
+  const [chatSessions, setChatSessions] = useState([]);
+  const [activeSessionId, setActiveSessionId] = useState('');
   const [activeTab, setActiveTab] = useState('qa');
   const [systemOnline, setSystemOnline] = useState(false);
 
   useEffect(() => {
-    const saved = localStorage.getItem('mass_auth_session');
-    if (saved) {
+    const savedAuth = localStorage.getItem('mass_auth_session');
+    if (savedAuth) {
       try {
-        setAuth(JSON.parse(saved));
+        setAuth(JSON.parse(savedAuth));
       } catch (e) {
         localStorage.removeItem('mass_auth_session');
       }
     }
-    setSessionId(crypto.randomUUID());
+
+    const savedSessions = localStorage.getItem('mass_chat_sessions');
+    if (savedSessions) {
+      try {
+        const parsed = JSON.parse(savedSessions);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setChatSessions(parsed);
+          setActiveSessionId(parsed[0].id);
+        } else {
+          createNewChatSession();
+        }
+      } catch (e) {
+        createNewChatSession();
+      }
+    } else {
+      createNewChatSession();
+    }
 
     // Check Backend Health
     fetch(`${BACKEND_URL}/ready`)
       .then(res => res.ok && setSystemOnline(true))
       .catch(() => setSystemOnline(false));
   }, []);
+
+  const saveSessionsToStorage = (sessions) => {
+    setChatSessions(sessions);
+    localStorage.setItem('mass_chat_sessions', JSON.stringify(sessions));
+  };
+
+  const createNewChatSession = () => {
+    const newId = crypto.randomUUID();
+    const newSession = {
+      id: newId,
+      title: 'New Conversation',
+      updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      messages: []
+    };
+    setChatSessions(prev => {
+      const updated = [newSession, ...prev];
+      localStorage.setItem('mass_chat_sessions', JSON.stringify(updated));
+      return updated;
+    });
+    setActiveSessionId(newId);
+    return newId;
+  };
+
+  const handleSelectSession = (id) => {
+    setActiveSessionId(id);
+    setActiveTab('qa');
+  };
+
+  const handleDeleteSession = async (id) => {
+    const updated = chatSessions.filter(s => s.id !== id);
+    saveSessionsToStorage(updated);
+    try {
+      await fetch(`${BACKEND_URL}/sessions/${id}`, { method: 'DELETE' });
+    } catch (e) {}
+
+    if (activeSessionId === id) {
+      if (updated.length > 0) {
+        setActiveSessionId(updated[0].id);
+      } else {
+        createNewChatSession();
+      }
+    }
+  };
+
+  const handleClearAllSessions = () => {
+    saveSessionsToStorage([]);
+    createNewChatSession();
+  };
+
+  const updateActiveSessionMessages = (newMessages, firstPrompt = '') => {
+    setChatSessions(prev => {
+      const updated = prev.map(s => {
+        if (s.id === activeSessionId) {
+          let title = s.title;
+          if ((!title || title === 'New Conversation') && firstPrompt) {
+            title = firstPrompt.length > 32 ? `${firstPrompt.substring(0, 32)}...` : firstPrompt;
+          }
+          return {
+            ...s,
+            title: title,
+            updatedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            messages: newMessages
+          };
+        }
+        return s;
+      });
+      localStorage.setItem('mass_chat_sessions', JSON.stringify(updated));
+      return updated;
+    });
+  };
 
   const handleLogin = (userAuth) => {
     setAuth(userAuth);
@@ -43,21 +130,10 @@ export default function App() {
     localStorage.removeItem('mass_auth_session');
   };
 
-  const handleNewSession = () => {
-    setSessionId(crypto.randomUUID());
-  };
-
-  const handleClearMemory = async () => {
-    if (sessionId) {
-      try {
-        await fetch(`${BACKEND_URL}/sessions/${sessionId}`, { method: 'DELETE' });
-      } catch (e) {}
-    }
-  };
-
   if (!auth || !auth.token) {
     return <LoginPage onLogin={handleLogin} backendUrl={BACKEND_URL} />;
   }
+
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--bg-dark)' }}>
@@ -71,11 +147,16 @@ export default function App() {
 
       {/* Main Body */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Sidebar */}
+        {/* ChatGPT Style Sidebar */}
         <Sidebar
-          sessionId={sessionId}
-          onNewSession={handleNewSession}
-          onClearMemory={handleClearMemory}
+          chatSessions={chatSessions}
+          activeSessionId={activeSessionId}
+          onNewSession={createNewChatSession}
+          onSelectSession={handleSelectSession}
+          onDeleteSession={handleDeleteSession}
+          onClearAllSessions={handleClearAllSessions}
+          user={auth.user_id}
+          role={auth.role}
         />
 
         {/* Content Area */}
@@ -105,7 +186,6 @@ export default function App() {
               <div style={{ fontSize: '1.4rem', fontWeight: 800, color: '#FBBF24', marginTop: 4 }}>94.2%</div>
               <div style={{ fontSize: '0.75rem', color: '#34D399', marginTop: 2 }}>+5.8% Compliance</div>
             </div>
-
           </div>
 
           {/* Navigation Tabs Bar */}
@@ -149,7 +229,13 @@ export default function App() {
 
           {/* Tab Content Views */}
           {activeTab === 'qa' && (
-            <QAChatTab backendUrl={BACKEND_URL} token={auth.token} sessionId={sessionId} />
+            <QAChatTab
+              backendUrl={BACKEND_URL}
+              token={auth.token}
+              sessionId={activeSessionId}
+              initialMessages={chatSessions.find(s => s.id === activeSessionId)?.messages || []}
+              onUpdateMessages={updateActiveSessionMessages}
+            />
           )}
 
           {activeTab === 'voice' && (
@@ -169,9 +255,10 @@ export default function App() {
           )}
 
           {activeTab === 'audit' && (
-            <SystemAuditTab sessionId={sessionId} backendUrl={BACKEND_URL} />
+            <SystemAuditTab sessionId={activeSessionId} backendUrl={BACKEND_URL} />
           )}
         </main>
+
       </div>
     </div>
   );
