@@ -73,11 +73,16 @@ flowchart TD
 - **Structure**: Assembles clean Markdown formatting with clear document provenance headers (`--- Document: [Name], Page: [P] ---`). Preserves markdown table syntax and visual bounding box captions.
 - **Sufficiency Gate**: Checks relevance thresholds; if top score $< 0.35$ or no keywords match, avoids hallucinating by emitting a controlled out-of-domain response.
 
-### 4.4 Grounded LLM Generation Gateway
+### 4.4 Grounded LLM Generation Gateway & Response Formatting
 - **Location**: `app/gateway/client.py`, `app/services/generation/generator.py`
-- **Primary Model**: Google Gemini 2.5 Flash with temperature `0.1` for deterministic factual precision.
+- **Primary Model**: Google Gemini Flash with temperature `0.1` for deterministic factual precision.
 - **Resilient Fallback**: Automatic failover to Groq (`llama-3.3-70b-versatile`) on rate limit or API timeout.
-- **Grounding Rule**: The system prompt strictly prohibits inferring unstated operational facts. Every technical claim must map to an retrieved context chunk.
+- **Grounding & Styling Rules**:
+  - **Clean Natural Language Prose**: Answers are synthesized in clear, executive engineering prose without markdown symbol clutter (`*`, `***`, `---`, or excessive `**` bolding).
+  - **Clean Minimal Citations**: Prevents repetitive citation dumps by placing clear source citations at the end of major paragraphs or numbered steps.
+  - **No Robotic Prefixes**: Answers begin directly without robotic disclaimers like *"Based on the provided sources..."* or pedantic meta-notes.
+  - **Factual Invariance**: The system prompt strictly prohibits inferring unstated operational facts. Every technical claim must map to a retrieved context chunk.
+
 
 ---
 
