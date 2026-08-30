@@ -478,6 +478,33 @@ class ShiftHandoverAgent(BaseAgent):
             db=db
         )
 
+        # Peer-to-Peer (P2P) A2A Delegation:
+        # If the voice note asks for SOP/procedure knowledge, delegate directly to QA Technical Agent
+        p2p_qa_response = ""
+        p2p_citations = []
+        if any(k in request.message.lower() for k in ["sop", "procedure", "manual", "how to", "specs", "specification"]):
+            try:
+                p2p_context = RequestContext(
+                    request_id=request.request_id,
+                    user_id=actor_id,
+                    user_role=actor_role.value,
+                    session_id=request.session_id,
+                    current_agent="qa_technical_agent",
+                    previous_agent=self.agent_id,
+                    metadata={"is_p2p_delegation": True, "p2p_source": self.agent_id}
+                )
+                qa_res = self.delegate(
+                    target_agent_id="qa_technical_agent",
+                    message=request.message,
+                    context=p2p_context,
+                    task_type="TECHNICAL_SOP_DELEGATION"
+                )
+                if qa_res and qa_res.response:
+                    p2p_qa_response = f"\n\n🤝 **Peer-to-Peer (P2P) QA Agent Technical SOP Reference**:\n{qa_res.response}"
+                    p2p_citations = qa_res.citations or []
+            except Exception as e:
+                logfire.warning(f"[{self.agent_id}] P2P delegation to QA agent failed: {e}")
+
         msg = (
             f"🎙️ **Field Voice Note Ingested**:\n"
             f"- **Unit**: `{res.unit_id}`\n"
@@ -485,13 +512,20 @@ class ShiftHandoverAgent(BaseAgent):
             f"- **Abnormalities Extracted**: {len(res.extracted_abnormalities)}\n"
             f"- **LOTO / Permits Extracted**: {len(res.extracted_loto_items)}\n"
             f"- **Summary**: {res.summary_message}"
+            f"{p2p_qa_response}"
         )
         return self._build_result(
             request.request_id,
             msg,
             "process_voice_note",
             t_start=t_start,
-            metadata={"unit_id": res.unit_id, "tags": res.extracted_equipment_tags}
+            citations=p2p_citations,
+            metadata={
+                "unit_id": res.unit_id,
+                "extracted_tags": res.extracted_equipment_tags,
+                "abnormalities_count": len(res.extracted_abnormalities),
+                "has_p2p_delegation": bool(p2p_qa_response)
+            }
         )
 
 
