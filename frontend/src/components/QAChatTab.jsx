@@ -18,8 +18,32 @@ export default function QAChatTab({ backendUrl, token, sessionId, initialMessage
   const audioChunksRef = useRef([]);
 
   useEffect(() => {
-    setMessages(initialMessages || []);
-  }, [sessionId]);
+    let isMounted = true;
+    if (token && sessionId) {
+      fetch(`${backendUrl}/conversations/${sessionId}/messages`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data && data.messages && data.messages.length > 0) {
+          const formatted = data.messages.map(m => ({
+            role: m.role.toLowerCase(),
+            content: m.content
+          }));
+          setMessages(formatted);
+        } else if (isMounted) {
+          setMessages(initialMessages || []);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setMessages(initialMessages || []);
+      });
+    } else {
+      setMessages(initialMessages || []);
+    }
+    return () => { isMounted = false; };
+  }, [sessionId, token, backendUrl]);
+
 
 
   const updateAndNotify = (newMsgs, promptText = '') => {
@@ -162,8 +186,12 @@ export default function QAChatTab({ backendUrl, token, sessionId, initialMessage
               citations: syncData.citations || [],
               a2aTrace: syncData.metadata?.a2a_trace || []
             };
+            if (onUpdateMessages) {
+              onUpdateMessages(copy, q);
+            }
             return copy;
           });
+
         }
         setStreaming(false);
         return;
@@ -227,21 +255,18 @@ export default function QAChatTab({ backendUrl, token, sessionId, initialMessage
         }
       }
 
-      let finalMsgs = [];
       setMessages((prev) => {
         const copy = [...prev];
         copy[copy.length - 1] = {
           ...copy[copy.length - 1],
           streaming: false
         };
-        finalMsgs = copy;
+        if (onUpdateMessages) {
+          onUpdateMessages(copy, q);
+        }
         return copy;
       });
-      if (onUpdateMessages) {
-        onUpdateMessages(finalMsgs, q);
-      }
     } catch (err) {
-      let errMsgs = [];
       setMessages((prev) => {
         const copy = [...prev];
         copy[copy.length - 1] = {
@@ -249,16 +274,16 @@ export default function QAChatTab({ backendUrl, token, sessionId, initialMessage
           content: `⚠️ Connection Error: ${err.message}`,
           streaming: false
         };
-        errMsgs = copy;
+        if (onUpdateMessages) {
+          onUpdateMessages(copy, q);
+        }
         return copy;
       });
-      if (onUpdateMessages) {
-        onUpdateMessages(errMsgs, q);
-      }
     } finally {
       setStreaming(false);
     }
   };
+
 
 
   return (
