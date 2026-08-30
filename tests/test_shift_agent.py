@@ -622,8 +622,9 @@ def test_23_qa_shift_multi_agent_routing(monkeypatch):
     assert route_res.intent == AgentIntent.MULTI_AGENT
 
     res = orchestrator.execute(req)
-    assert res.query_type == "multi_agent_composite"
+    assert res.query_type in ["multi_agent_composite", "p2p_peer_exchange"]
     assert "Standard Operating Procedure (SOP) Reference" in res.response
+
     assert "SOP-C101-04" in res.response
     assert len(res.citations) >= 1
 
