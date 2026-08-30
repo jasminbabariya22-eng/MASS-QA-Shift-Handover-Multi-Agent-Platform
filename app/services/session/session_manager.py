@@ -55,11 +55,40 @@ class ConversationManager:
             except Exception as e:
                 logfire.warning(f"Error parsing cached session ({e}).")
 
-        # 3. Create new
+        # 3. Check PostgreSQL Database if not in cache
+        try:
+            from app.db.base import SessionLocal
+            from app.services.db_services import db_service
+            db = SessionLocal()
+            try:
+                conv = db_service.get_or_create_conversation(db, session_id=sid, user_id=user_id)
+                db_msgs = db_service.get_conversation_messages(db, conversation_id=conv.id)
+                if db_msgs:
+                    chat_msgs = [
+                        ChatMessage(
+                            message_id=m.id,
+                            session_id=sid,
+                            role=m.role.lower(),
+                            content=m.content,
+                            created_at=m.created_at.timestamp() if m.created_at else time.time()
+                        )
+                        for m in db_msgs
+                    ]
+                    session = SessionState(session_id=sid, user_id=user_id, messages=chat_msgs)
+                    self._in_memory_sessions[sid] = session
+                    self._save_session(session)
+                    return session
+            finally:
+                db.close()
+        except Exception as ex:
+            logfire.warning(f"PostgreSQL session recovery fallback error ({ex}).")
+
+        # 4. Create new blank session
         new_session = SessionState(session_id=sid, user_id=user_id)
         self._in_memory_sessions[sid] = new_session
         self._save_session(new_session)
         return new_session
+
 
     def add_message(
         self,
