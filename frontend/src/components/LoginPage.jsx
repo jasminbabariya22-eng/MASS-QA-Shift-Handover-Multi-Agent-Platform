@@ -4,8 +4,6 @@ import { Shield, Key, User, Lock, Activity, CheckCircle2, AlertTriangle } from '
 const ROLES = [
   { id: 'CONSOLE_OPERATOR', label: 'Console Operator', desc: 'Panel console shift logging & SOP search' },
   { id: 'FIELD_OPERATOR', label: 'Field Operator', desc: 'Plant walkdown notes & equipment inspection' },
-  { id: 'OUTGOING_OPERATOR', label: 'Outgoing Operator', desc: 'Prepares shift turnover draft & LOTO isolations' },
-  { id: 'INCOMING_OPERATOR', label: 'Incoming Operator', desc: 'Inspects turnover record & acknowledges risks' },
   { id: 'SHIFT_SUPERVISOR', label: 'Shift Supervisor', desc: 'Full shift approval & HITL safety sign-off' },
   { id: 'OPERATIONS_ENGINEER', label: 'Operations Engineer', desc: 'Safe operating limit (SOL) diagnostics' },
   { id: 'MAINTENANCE_LEAD', label: 'Maintenance Lead', desc: 'Work order updates & LOTO verification' },
@@ -86,7 +84,7 @@ export default function LoginPage({ onLogin, backendUrl }) {
             MASS Operations Portal
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
-            10 Operational Roles — Database Credentials & RBAC
+            8 Operational Personnel Roles — Database Credentials & RBAC
           </p>
         </div>
 
@@ -111,7 +109,7 @@ export default function LoginPage({ onLogin, backendUrl }) {
         {/* Demo Accounts Preset Buttons */}
         <div style={{ marginBottom: '16px', padding: '10px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 6 }}>
-            🔑 Select Demo Account (10 Operational Roles):
+            🔑 Select Demo Account Credentials (8 Operational Roles):
           </div>
           <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
             <button type="button" onClick={() => setPresetUser('op_console_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
@@ -119,12 +117,6 @@ export default function LoginPage({ onLogin, backendUrl }) {
             </button>
             <button type="button" onClick={() => setPresetUser('op_field_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
               op_field_1 (Field)
-            </button>
-            <button type="button" onClick={() => setPresetUser('op_outgoing_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
-              op_outgoing_1 (Outgoing)
-            </button>
-            <button type="button" onClick={() => setPresetUser('op_incoming_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
-              op_incoming_1 (Incoming)
             </button>
             <button type="button" onClick={() => setPresetUser('sup_shift_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.7rem', padding: '3px 6px' }}>
               sup_shift_1 (Supervisor)
@@ -146,6 +138,7 @@ export default function LoginPage({ onLogin, backendUrl }) {
             </button>
           </div>
         </div>
+
 
 
         {/* Login Form */}

@@ -36,24 +36,8 @@ class HarnessPermissionManager:
             ToolPermission.READ_INSTRUMENT,
             ToolPermission.READ_ENGINEERING_DOCUMENT
         },
-        "OUTGOING_OPERATOR": {
-            ToolPermission.RETRIEVE_DOCUMENT,
-            ToolPermission.SEARCH_KNOWLEDGE_BASE,
-            ToolPermission.CREATE_HANDOVER,
-            ToolPermission.READ_HANDOVER,
-            ToolPermission.UPDATE_HANDOVER,
-            ToolPermission.TRANSITION_HANDOVER,
-            ToolPermission.MANAGE_SAFETY_ITEMS
-        },
-        "INCOMING_OPERATOR": {
-            ToolPermission.RETRIEVE_DOCUMENT,
-            ToolPermission.SEARCH_KNOWLEDGE_BASE,
-            ToolPermission.READ_HANDOVER,
-            ToolPermission.TRANSITION_HANDOVER,
-            ToolPermission.READ_LOOP,
-            ToolPermission.READ_INSTRUMENT
-        },
         "SHIFT_SUPERVISOR": {
+
             ToolPermission.RETRIEVE_DOCUMENT,
             ToolPermission.SEARCH_KNOWLEDGE_BASE,
             ToolPermission.GENERATE_GROUNDED_ANSWER,
