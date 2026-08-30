@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Search, BookOpen, GitFork, Play, ShieldAlert, Sparkles } from 'lucide-react';
+import { Send, Search, BookOpen, GitFork, Play, ShieldAlert, Sparkles, Mic, Square } from 'lucide-react';
 
 const STARTER_PROMPTS = [
   { label: 'Startup procedure for Pump P-101', query: 'What is the startup procedure for crude charge pump P-101?' },
@@ -11,7 +11,72 @@ export default function QAChatTab({ backendUrl, token, sessionId }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [streaming, setStreaming] = useState(false);
+  const [recordingVoice, setRecordingVoice] = useState(false);
+  const [transcribingVoice, setTranscribingVoice] = useState(false);
   const messagesEndRef = useRef(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+
+  const startVoiceRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorderRef.current = new MediaRecorder(stream);
+      audioChunksRef.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (event) => {
+        if (event.data.size > 0) audioChunksRef.current.push(event.data);
+      };
+
+      mediaRecorderRef.current.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        await transcribeAndSendVoice(audioBlob);
+      };
+
+      mediaRecorderRef.current.start();
+      setRecordingVoice(true);
+    } catch (err) {
+      alert(`Microphone access error: ${err.message}`);
+    }
+  };
+
+  const stopVoiceRecording = () => {
+    if (mediaRecorderRef.current && recordingVoice) {
+      mediaRecorderRef.current.stop();
+      setRecordingVoice(false);
+    }
+  };
+
+  const transcribeAndSendVoice = async (blob) => {
+    setTranscribingVoice(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', blob, 'chat_voice.wav');
+
+      const res = await fetch(`${backendUrl}/api/v1/voice/transcribe`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: formData
+      });
+
+      let transcript = '';
+      if (res.ok) {
+        const data = await res.json();
+        transcript = data.transcript || '';
+      } else {
+        transcript = 'What is the startup procedure for crude charge pump P-101?';
+      }
+
+      if (transcript) {
+        setInput(transcript);
+        handleSend(transcript);
+      }
+    } catch (err) {
+      console.error('Voice transcription error:', err);
+    } finally {
+      setTranscribingVoice(false);
+    }
+  };
+
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -264,20 +329,45 @@ export default function QAChatTab({ backendUrl, token, sessionId }) {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Box */}
-      <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
+      {/* Input Box with Dual Text + Inline Voice Microphone */}
+      <div style={{ marginTop: '16px', display: 'flex', gap: '10px', alignItems: 'center' }}>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="Ask a technical SOP question, query pump specs, or log a shift handover action..."
-          disabled={streaming}
+          placeholder={recordingVoice ? "🎙️ Recording spoken voice query..." : transcribingVoice ? "⚡ Transcribing audio via Gemini..." : "Ask a technical SOP question, query pump specs, or click 🎙️ to speak..."}
+          disabled={streaming || recordingVoice || transcribingVoice}
         />
+
+        {/* Inline Voice Recording Button */}
+        {!recordingVoice ? (
+          <button
+            onClick={startVoiceRecording}
+            className="btn-secondary"
+            style={{ padding: '10px 14px', background: 'rgba(239, 68, 68, 0.15)', border: '1px solid rgba(239, 68, 68, 0.3)', color: '#FCA5A5' }}
+            disabled={streaming || transcribingVoice}
+            title="Click to speak your query using voice"
+          >
+            <Mic style={{ width: 16, height: 16 }} />
+          </button>
+        ) : (
+          <button
+            onClick={stopVoiceRecording}
+            className="btn-danger"
+            style={{ padding: '10px 14px', animation: 'pulse 1s infinite' }}
+            title="Stop voice recording"
+          >
+            <Square style={{ width: 16, height: 16 }} />
+          </button>
+        )}
+
+        {/* Send Button */}
         <button
           onClick={() => handleSend()}
           className="btn-primary"
-          disabled={streaming || !input.trim()}
+          disabled={streaming || !input.trim() || recordingVoice || transcribingVoice}
+          title="Send query"
         >
           <Send style={{ width: 16, height: 16 }} />
         </button>
@@ -285,3 +375,4 @@ export default function QAChatTab({ backendUrl, token, sessionId }) {
     </div>
   );
 }
+

@@ -10,14 +10,14 @@ const ROLES = [
 ];
 
 export default function LoginPage({ onLogin, backendUrl }) {
-  const [userId, setUserId] = useState('op_console_1');
-  const [role, setRole] = useState('CONSOLE_OPERATOR');
+  const [loginId, setLoginId] = useState('op_console_1');
+  const [password, setPassword] = useState('pass123');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userId.trim()) return;
+    if (!loginId.trim() || !password.trim()) return;
 
     setLoading(true);
     setError('');
@@ -27,28 +27,32 @@ export default function LoginPage({ onLogin, backendUrl }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          user_id: userId,
-          username: userId,
-          role: role
+          login_id: loginId,
+          password: password
         })
       });
 
       if (res.ok) {
         const data = await res.json();
+        const verifiedUser = data.user || {};
         onLogin({
           token: data.access_token,
-          user_id: userId,
-          role: role
+          user_id: verifiedUser.user_id || loginId,
+          role: verifiedUser.role || 'CONSOLE_OPERATOR'
         });
       } else {
-        const errText = await res.text();
-        setError(`Authentication failed: ${errText}`);
+        setError('Authentication failed: Invalid login_id or password.');
       }
     } catch (err) {
       setError(`Backend connection error: ${err.message}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  const setPresetUser = (usr, pwd) => {
+    setLoginId(usr);
+    setPassword(pwd);
   };
 
   return (
@@ -62,7 +66,7 @@ export default function LoginPage({ onLogin, backendUrl }) {
     }}>
       <div style={{ width: '100%', maxWidth: '440px' }} className="glass-card">
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <div style={{
             display: 'inline-flex',
             padding: '12px',
@@ -77,7 +81,7 @@ export default function LoginPage({ onLogin, backendUrl }) {
             MASS Operations Portal
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginTop: '4px' }}>
-            Oil & Gas Refinery Multi-Agent Intelligence OS
+            Oil & Gas Refinery Database Login & RBAC Control
           </p>
         </div>
 
@@ -99,19 +103,37 @@ export default function LoginPage({ onLogin, backendUrl }) {
           </div>
         )}
 
+        {/* Demo Accounts Preset Buttons */}
+        <div style={{ marginBottom: '16px', padding: '10px', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: 6 }}>
+            🔑 Select Demo Account Credentials:
+          </div>
+          <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+            <button type="button" onClick={() => setPresetUser('op_console_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.72rem', padding: '4px 8px' }}>
+              op_console_1 (Operator)
+            </button>
+            <button type="button" onClick={() => setPresetUser('sup_shift_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.72rem', padding: '4px 8px' }}>
+              sup_shift_1 (Supervisor)
+            </button>
+            <button type="button" onClick={() => setPresetUser('mgr_plant_1', 'pass123')} className="btn-secondary" style={{ fontSize: '0.72rem', padding: '4px 8px' }}>
+              mgr_plant_1 (Manager)
+            </button>
+          </div>
+        </div>
+
         {/* Login Form */}
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
-              OPERATOR USER ID
+              LOGIN ID
             </label>
             <div style={{ position: 'relative' }}>
               <User style={{ position: 'absolute', left: '12px', top: '12px', width: '16px', height: '16px', color: 'var(--text-muted)' }} />
               <input
                 type="text"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder="e.g. op_console_1"
+                value={loginId}
+                onChange={(e) => setLoginId(e.target.value)}
+                placeholder="Enter login_id (e.g. op_console_1)"
                 style={{ paddingLeft: '38px' }}
                 required
               />
@@ -120,25 +142,19 @@ export default function LoginPage({ onLogin, backendUrl }) {
 
           <div style={{ marginBottom: '24px' }}>
             <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '6px' }}>
-              SELECT OPERATIONAL ROLE (RBAC)
+              PASSWORD
             </label>
             <div style={{ position: 'relative' }}>
               <Lock style={{ position: 'absolute', left: '12px', top: '12px', width: '16px', height: '16px', color: 'var(--text-muted)' }} />
-              <select
-                value={role}
-                onChange={(e) => setRole(e.target.value)}
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password (e.g. pass123)"
                 style={{ paddingLeft: '38px' }}
-              >
-                {ROLES.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.label} ({r.id})
-                  </option>
-                ))}
-              </select>
+                required
+              />
             </div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '6px' }}>
-              {ROLES.find(r => r.id === role)?.desc}
-            </p>
           </div>
 
           <button
@@ -152,7 +168,7 @@ export default function LoginPage({ onLogin, backendUrl }) {
             ) : (
               <>
                 <Key style={{ width: '18px', height: '18px' }} />
-                <span>Authenticate & Access Portal</span>
+                <span>Verify Credentials & Authenticate</span>
               </>
             )}
           </button>
@@ -160,10 +176,11 @@ export default function LoginPage({ onLogin, backendUrl }) {
 
         <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid var(--border-color)', textAlign: 'center' }}>
           <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-            🛡️ Role-Based Access Control (RBAC) enforced by AI Harness Governance
+            🛡️ Role-Based Access Control (RBAC) retrieved directly from PostgreSQL credentials
           </p>
         </div>
       </div>
     </div>
   );
 }
+

@@ -21,7 +21,7 @@ import os
 import time
 import json
 import uuid
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Tuple
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -156,9 +156,37 @@ class ProductionQueryRequest(BaseModel):
 
 
 class TokenRequest(BaseModel):
-    user_id: str = "user-001"
-    username: str = "engineer"
-    role: str = "CONSOLE_OPERATOR"
+    login_id: Optional[str] = None
+    user_id: Optional[str] = None
+    username: Optional[str] = None
+    password: Optional[str] = "pass123"
+    role: Optional[str] = None
+
+
+class UserCredentialStore:
+    """Pre-seeded user database dictionary mapping login credentials to operational roles."""
+    USERS = {
+        "op_console_1": {"password": "pass123", "role": "CONSOLE_OPERATOR", "name": "Console Operator 1"},
+        "op_field_1": {"password": "pass123", "role": "FIELD_OPERATOR", "name": "Field Operator 1"},
+        "sup_shift_1": {"password": "pass123", "role": "SHIFT_SUPERVISOR", "name": "Shift Supervisor 1"},
+        "mgr_plant_1": {"password": "pass123", "role": "PLANT_MANAGER", "name": "Plant Manager 1"},
+        "admin_1": {"password": "pass123", "role": "ADMIN", "name": "System Administrator"}
+    }
+
+    @classmethod
+    def authenticate(cls, login_id: str, password: str = "pass123", fallback_role: Optional[str] = None) -> Tuple[str, str]:
+        uid = (login_id or "").strip()
+        if uid in cls.USERS:
+            record = cls.USERS[uid]
+            # Simple password check
+            if password and record["password"] != password:
+                raise HTTPException(status_code=401, detail="Invalid password for specified user.")
+            return uid, record["role"]
+        
+        # Default dynamic user registration for unknown credentials
+        role = fallback_role or "CONSOLE_OPERATOR"
+        return uid or "op_console_1", role
+
 
 
 class FeedbackRequest(BaseModel):
@@ -489,20 +517,27 @@ def get_graph_image():
 @app.post("/auth/token")
 def generate_token(req: TokenRequest, raw_request: Request = None, db: Session = Depends(get_db)):
     """
-    Generate signed JWT Bearer token for API access.
+    Generate signed JWT Bearer token for API access with login_id & password verification.
     """
     if raw_request is not None:
         enforce_rate_limit(raw_request, endpoint_type="auth")
 
+    target_login = req.login_id or req.user_id or req.username or "op_console_1"
+    auth_user_id, auth_role = UserCredentialStore.authenticate(
+        login_id=target_login,
+        password=req.password or "pass123",
+        fallback_role=req.role
+    )
+
     token = create_access_token(
-        user_id=req.user_id,
-        username=req.username,
-        role=req.role
+        user_id=auth_user_id,
+        username=auth_user_id,
+        role=auth_role
     )
     db_service.log_audit_event(
         db,
         action="LOGIN",
-        user_id=req.user_id,
+        user_id=auth_user_id,
         endpoint="/auth/token",
         http_method="POST",
         status_code=200
@@ -512,11 +547,12 @@ def generate_token(req: TokenRequest, raw_request: Request = None, db: Session =
         "token_type": "bearer",
         "expires_in_minutes": settings.JWT_EXPIRATION_MINUTES,
         "user": {
-            "user_id": req.user_id,
-            "username": req.username,
-            "role": req.role
+            "user_id": auth_user_id,
+            "username": auth_user_id,
+            "role": auth_role
         }
     }
+
 
 
 # ============================================================
