@@ -1,117 +1,73 @@
-# 08. Shift Handover Agent & Natural Language Command Interface
+# 08. Shift Handover Agent, Voice Ingestion & Quality Gate
 
 ## 1. Purpose & Scope
 
-This document details the **Shift Handover Agent (`ShiftHandoverAgent`)** and its **Natural Language Command Extractor (`ShiftCommandExtractor`)** implemented in `app/agents/shift/agent.py`, `app/agents/shift/extractor.py`, and `app/agents/shift/command.py`.
+This document details the **Shift Handover Agent (`ShiftHandoverAgent`)**, its **Natural Language Command Extractor (`ShiftCommandExtractor`)**, the **Gemini Audio Voice Ingestion Subsystem**, and the **AI Quality Gate Engine** implemented in:
+- `app/agents/shift/agent.py`
+- `app/agents/shift/extractor.py`
+- `app/agents/shift/quality_gate.py`
+- `app/services/voice/transcribe.py`
+- `app/services/shift_voice_service.py`
 
-The Shift Agent serves as a conversational, natural-language interface over the deterministic `ShiftHandoverWorkflowEngine` and PostgreSQL persistence layer, translating operator intent into validated workflow commands.
+The Shift Agent serves as a conversational natural-language and voice interface over the deterministic `ShiftHandoverWorkflowEngine` and PostgreSQL persistence layer.
 
 ---
 
-## 2. Core Architectural Separation
+## 2. Core Subsystem Architecture
 
 ```mermaid
 flowchart TD
-    PROMPT["Operator Natural Language Prompt<br/>('Submit the handover for CDU-101')"]
+    PROMPT["Operator Natural Language or Field Voice Audio<br/>('Create handover for CDU-101 and check startup SOP')"]
     
-    subgraph Agent_Boundary["Shift Handover Agent Boundary"]
-        EXTRACTOR["ShiftCommandExtractor<br/>(Deterministic Regex + LLM Fallback)"]
-        COMMAND["ShiftCommand Contract<br/>(action='SUBMIT', unit_id='CDU-101')"]
-        GUARD["Confirmation & Clarification Guards<br/>(Requires explicit confirmation for high-impact actions)"]
+    subgraph Agent_Boundary["Shift Handover Agent & Voice Boundary"]
+        VOICE["GeminiAudioTranscriber<br/>(Gemini 3.6 Flash Speech-to-Text)"]
+        INGEST["ShiftVoiceIngestionService<br/>(Extract Tags, Abnormalities & LOTO)"]
+        EXTRACTOR["ShiftCommandExtractor<br/>(Deterministic Regex + LLM Parsing)"]
+        QUALITY["ShiftQualityGateEngine<br/>(0-100% Completeness Evaluator)"]
+        P2P["Peer-to-Peer (P2P) Channel<br/>(Delegates SOP queries to QA Agent)"]
     end
 
     subgraph Deterministic_Core["Authoritative Deterministic Core"]
         SERVICE["ShiftHandoverService"]
-        ENGINE["ShiftHandoverWorkflowEngine<br/>(State Transition & Role Authority)"]
+        ENGINE["ShiftHandoverWorkflowEngine<br/>(FSM & Role Authority)"]
         REPO["ShiftHandoverRepository<br/>(PostgreSQL 18 + Version Lock)"]
     end
 
-    PROMPT --> EXTRACTOR --> COMMAND --> GUARD
-    GUARD --> SERVICE --> ENGINE --> REPO
-```
-
-### Critical Non-Negotiable Invariants:
-1. **The Agent is NOT the Workflow Engine**: The LLM never decides if a transition is valid. It merely extracts parameters and calls `ShiftHandoverService`.
-2. **The Agent Never Directly Manipulates PostgreSQL**: All database writes pass through `ShiftHandoverRepository` with transaction control and optimistic locking.
-3. **The Agent Never Bypasses Role Authority**: The actor's authenticated role from the JWT token is passed directly to the engine for deterministic authorization.
-
----
-
-## 3. Command Extraction (`ShiftCommandExtractor`)
-
-The `ShiftCommandExtractor` uses dual-phase extraction:
-- **Phase 1 (Deterministic Regex)**: Zero-token regex extractors match common operational keywords (`create handover`, `submit`, `approve`, `return`, `acknowledge`, `unit CDU-101`, `SHO-101`).
-- **Phase 2 (Structured LLM Parsing)**: If regex confidence is low or complex operational notes are supplied (e.g., extracting multiple compressor vibration readings and LOTO isolations), dispatches to structured LLM extraction.
-
-### Extracted Contract (`ShiftCommand`):
-```python
-class ShiftCommand(BaseModel):
-    action: ShiftHandoverAction     # CREATE, SAVE, EDIT, SUBMIT, APPROVE, RETURN, REJECT, ACKNOWLEDGE, CANCEL
-    handover_id: Optional[str] = None
-    unit_id: Optional[str] = None
-    shift_type: Optional[ShiftType] = None
-    summary: Optional[str] = None
-    abnormalities: List[str] = Field(default_factory=list)
-    safety_items: List[Dict[str, Any]] = Field(default_factory=list)
-    reason: Optional[str] = None
-    confidence: float = 1.0
+    PROMPT --> VOICE --> INGEST --> EXTRACTOR
+    EXTRACTOR --> QUALITY
+    EXTRACTOR --> P2P
+    EXTRACTOR --> SERVICE --> ENGINE --> REPO
 ```
 
 ---
 
-## 4. End-to-End User Interaction Examples
+## 3. Gemini Audio Voice Ingestion
 
-### 4.1 "Create a handover for CDU-101"
-1. **Extraction**: `action = CREATE`, `unit_id = "CDU-101"`, `shift_type = DAY`.
-2. **Execution**: Calls `ShiftHandoverService.create_handover(...)`.
-3. **Database**: Inserts row into `shift_handovers` with `state = DRAFT`, `version = 1`.
-4. **Agent Response**:
-   > *"Draft shift handover created successfully for **CDU-101** (ID: `SHO-2026-CDU101-01`). You can now add equipment abnormalities, open permits, and operational notes."*
-
-### 4.2 "Add compressor C-101 high vibration to draft"
-1. **Extraction**: `action = EDIT`, `abnormalities = ["Compressor C-101 high vibration (4.5 mm/s)"]`.
-2. **Execution**: Calls `ShiftHandoverService.update_handover(...)`.
-3. **Database**: Appends observation to `equipment_abnormalities` JSONB column, increments `version = 2`.
-4. **Agent Response**:
-   > *"Updated draft `SHO-2026-CDU101-01`. Added equipment abnormality for **Compressor C-101**."*
-
-### 4.3 "Submit the handover"
-1. **Extraction**: `action = SUBMIT`.
-2. **Policy Check**: High-risk action requires human confirmation/authorization.
-3. **Execution**: `ShiftHandoverService.submit_handover(...)` transitions state from `DRAFT` to `SUBMITTED`.
-4. **Audit**: Inserts audit log with actor ID and timestamp.
-5. **Agent Response**:
-   > *"Handover `SHO-2026-CDU101-01` has been **SUBMITTED** for Supervisor review."*
-
-### 4.4 "Approve handover SHO-2026-CDU101-01"
-1. **Role Check**: Verifies actor role is `SHIFT_SUPERVISOR`.
-2. **Execution**: Transitions state to `PENDING_ACKNOWLEDGEMENT`.
-3. **Agent Response**:
-   > *"Handover `SHO-2026-CDU101-01` **APPROVED** by Supervisor. Status is now **PENDING ACKNOWLEDGEMENT** by incoming crew."*
-
-### 4.5 "Return handover because LOTO list is incomplete"
-1. **Extraction**: `action = RETURN`, `reason = "LOTO list is incomplete"`.
-2. **Validation**: Checks that mandatory `reason` is present.
-3. **Execution**: Transitions state to `RETURNED`, saving reason in audit trail.
-4. **Agent Response**:
-   > *"Handover `SHO-2026-CDU101-01` **RETURNED** to outgoing operator. Reason: 'LOTO list is incomplete'."*
+The **Field Voice Ingestion Subsystem** allows field operators to speak updates directly into their device microphone:
+1. **Audio Speech-to-Text (`GeminiAudioTranscriber`)**: Uses `gemini-3.6-flash` to transcribe audio files (`.wav`, `.mp3`, `.m4a`).
+2. **Structured Attribute Extraction (`ShiftVoiceIngestionService`)**:
+   - **Equipment Tags**: Regex matching ISA-5.1 tags (`P-101A`, `CDU-101`, `C-101`).
+   - **Abnormalities**: Extracts operational anomalies (`pump cavitation`, `seal weeping`).
+   - **LOTO / Work Permits**: Extracts isolation tags (`LOTO-101`, `PTW-402`).
 
 ---
 
-## 5. Verification & Testing
+## 4. AI Quality Gate Engine (`ShiftQualityGateEngine`)
 
-- **Test Suite**: [`tests/test_shift_agent.py`](file:///d:/Chatboat/tests/test_shift_agent.py)
-- **Verified Baseline**: **25 / 25 tests PASSED**.
-- **Coverage**:
-  - Natural language command extraction across all 8 actions.
-  - Role enforcement (operator rejected on approve command).
-  - Terminal state protection (cannot edit completed handover).
-  - Optimistic locking conflict translation into user-friendly error messages.
+Before a shift handover can be submitted or approved, the **Quality Gate Engine** ([`app/agents/shift/quality_gate.py`](file:///d:/Chatboat/app/agents/shift/quality_gate.py)) evaluates its completeness on a **0-100% scale** across 4 dimensions:
+
+| Dimension | Weight | Target Content |
+| :--- | :---: | :--- |
+| **Operational Summary** | 25.0 pts | Narrative of shift operations and unit targets |
+| **Safety Critical Items** | 25.0 pts | Documented LOTO isolations, ESD bypasses, and PTW permits |
+| **Equipment Status** | 25.0 pts | Equipment trips, maintenance notes, and abnormalities |
+| **Work Permits & Actions**| 25.0 pts | Open work permits and mandatory carry-forward actions |
+
+- **Passing Threshold**: `70.0%`
+- **Output**: Generates `overall_score`, `is_passing`, list of `missing_items`, and `recommendations`.
 
 ---
 
-## 6. Related Documentation
+## 5. Peer-to-Peer (P2P) A2A Delegation
 
-- [06_SHIFT_HANDOVER_WORKFLOW.md](file:///d:/Chatboat/DOCS/06_SHIFT_HANDOVER_WORKFLOW.md) — Workflow state machine.
-- [07_SHIFT_HANDOVER_DATABASE.md](file:///d:/Chatboat/DOCS/07_SHIFT_HANDOVER_DATABASE.md) — PostgreSQL persistence models.
-- [09_API_CHATBOT_INTEGRATION.md](file:///d:/Chatboat/DOCS/09_API_CHATBOT_INTEGRATION.md) — Exposing the Shift Agent via FastAPI.
+If a shift handover request or voice note asks for engineering documentation or SOP procedures (e.g. *"Log issue on P-101A and fetch its startup SOP"*), the `ShiftHandoverAgent` uses `self.delegate()` to initiate a **Bidirectional P2P Peer Exchange** with `qa_technical_agent` ([`app/agents/p2p.py`](file:///d:/Chatboat/app/agents/p2p.py)), embedding the retrieved SOP citations directly into the shift log.

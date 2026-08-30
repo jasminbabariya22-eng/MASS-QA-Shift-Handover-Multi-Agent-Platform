@@ -1,5 +1,5 @@
 import re
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 import logfire
 
 from app.harness.contracts import HarnessValidationResult
@@ -81,10 +81,13 @@ class HarnessOutputValidator:
             sanitized_response=sanitized_text
         )
 
-    def sanitize_secrets(self, text: str) -> (str, bool):
+    def sanitize_secrets(self, text: Optional[str]) -> Tuple[str, bool]:
         """
         Mask any credentials, JWTs, DB URIs, and internal network addresses.
         """
+        if not text:
+            return "", False
+
         sanitized = text
         secret_found = False
 
@@ -104,6 +107,7 @@ class HarnessOutputValidator:
             )
 
         return sanitized, secret_found
+
 
 
 # Global Validator Singleton
