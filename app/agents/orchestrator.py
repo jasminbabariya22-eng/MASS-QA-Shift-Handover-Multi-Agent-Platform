@@ -137,8 +137,9 @@ class AgentOrchestrator:
         if intent == AgentIntent.MULTI_AGENT:
             targets = context.target_agents or ["shift_handover_agent", "qa_technical_agent"]
             shift_agent = agent_registry.get("shift_handover_agent") if "shift_handover_agent" in targets else None
-            
+            partner_agent_id = "qa_technical_agent"
             partner_agent = agent_registry.get("qa_technical_agent")
+
             
             shift_response_part = ""
             if shift_agent:

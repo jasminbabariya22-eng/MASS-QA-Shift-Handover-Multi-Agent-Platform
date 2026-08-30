@@ -18,10 +18,13 @@ class Settings:
     GROQ_MODEL = "llama-3.3-70b-versatile"
     GROQ_FALLBACK_API_KEY = os.getenv("GROQ_FALLBACK_API_KEY")
 
-    # --- LLM GATEWAY (PORTKEY) ---
+    # --- LLM GATEWAY (PORTKEY & MESH API) ---
     PORTKEY_API_KEY = os.getenv("PORTKEY_API_KEY")
+    MESH_API_KEY = os.getenv("MESH_API_KEY", os.getenv("PORTKEY_API_KEY", ""))
+    MESH_API_BASE_URL = os.getenv("MESH_API_BASE_URL", os.getenv("Mesh_API_URL", os.getenv("MESH_API_URL", "https://api.portkey.ai/v1")))
     GROQ_SLUG =  "rag"     # primary: @rag/llama-3.3-70b-versatile
     GROQ_SLUG_2 = "brag"  # fallback: @brag/llama-3.1-8b-instant
+
 
     
     # --- OBSERVABILITY ---
