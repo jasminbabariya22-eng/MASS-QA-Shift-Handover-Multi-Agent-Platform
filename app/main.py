@@ -2,7 +2,21 @@
 # CRITICAL: logfire MUST be configured before ALL other imports
 # so that spans from all modules are captured from the start.
 # ============================================================
+import sys
+import os
+
+_venv_site = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".venv", "Lib", "site-packages"))
+if os.path.exists(_venv_site) and _venv_site not in sys.path:
+    sys.path.insert(0, _venv_site)
+
+_ws_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if _ws_root not in sys.path:
+    sys.path.insert(0, _ws_root)
+
+
+
 import logfire
+
 import os
 import time
 import json
@@ -14,7 +28,8 @@ load_dotenv()
 logfire.configure(token=os.getenv("LOGFIRE_TOKEN"))
 
 # Now safe to import app modules - logfire is already active
-from fastapi import FastAPI, Response, Depends, HTTPException, status, Request
+from fastapi import FastAPI, Response, Depends, HTTPException, status, Request, UploadFile, File
+
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
@@ -433,6 +448,30 @@ def ready():
         "status": "ready" if is_ready else "degraded",
         "dependencies": deps
     }
+
+
+@app.post("/api/v1/voice/transcribe")
+async def transcribe_voice_endpoint(file: UploadFile = File(...)):
+    """
+    Transcribe raw voice audio recording (.wav, .mp3, .webm, .ogg) into text using Gemini AI Speech-to-Text.
+    """
+    try:
+        audio_bytes = await file.read()
+        mime_type = file.content_type or "audio/wav"
+        from app.services.voice_transcriber import voice_transcriber
+        transcript = voice_transcriber.transcribe_audio(audio_bytes, mime_type=mime_type)
+        return {
+            "transcript": transcript,
+            "status": "success",
+            "size_bytes": len(audio_bytes)
+        }
+    except Exception as ex:
+        logfire.error(f"Voice transcription endpoint failed: {ex}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"code": "VOICE_TRANSCRIBE_ERROR", "message": str(ex)}
+        )
+
 
 
 @app.get("/graph")

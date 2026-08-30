@@ -107,13 +107,6 @@ class HarnessPermissionManager:
             ToolPermission.TRANSITION_HANDOVER,
             ToolPermission.READ_AUDIT,
             ToolPermission.MANAGE_SAFETY_ITEMS
-        },
-        "loop_engineering_agent": {
-            ToolPermission.READ_LOOP,
-            ToolPermission.READ_INSTRUMENT,
-            ToolPermission.READ_IO_MAPPING,
-            ToolPermission.READ_ENGINEERING_DOCUMENT,
-            ToolPermission.VALIDATE_LOOP
         }
     }
 

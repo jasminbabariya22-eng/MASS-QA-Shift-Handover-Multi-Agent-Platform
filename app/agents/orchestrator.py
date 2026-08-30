@@ -133,13 +133,12 @@ class AgentOrchestrator:
                 }
             )
 
-        # 3. Multi-Agent Coordination (Shift Handover + QA / Loop Engineering)
+        # 3. Multi-Agent Coordination (Shift Handover + QA)
         if intent == AgentIntent.MULTI_AGENT:
             targets = context.target_agents or ["shift_handover_agent", "qa_technical_agent"]
             shift_agent = agent_registry.get("shift_handover_agent") if "shift_handover_agent" in targets else None
             
-            partner_agent_id = "loop_engineering_agent" if "loop_engineering_agent" in targets else "qa_technical_agent"
-            partner_agent = agent_registry.get(partner_agent_id) or agent_registry.get("qa_technical_agent")
+            partner_agent = agent_registry.get("qa_technical_agent")
             
             shift_response_part = ""
             if shift_agent:
@@ -159,11 +158,12 @@ class AgentOrchestrator:
                 except Exception as e:
                     partner_response_part = f"⚠️ *[{partner_agent.name}]*: Knowledge retrieval unavailable ({str(e)})."
 
-            partner_title = "Loop Engineering Reference" if partner_agent_id == "loop_engineering_agent" else "Standard Operating Procedure (SOP) Reference"
+            partner_title = "Standard Operating Procedure (SOP) Reference"
             composite_msg = (
                 f"{shift_response_part}\n\n"
                 f"**{partner_title}:**\n{partner_response_part}"
             ) if shift_response_part else partner_response_part
+
 
             return AgentResult(
                 request_id=request.request_id,

@@ -97,8 +97,27 @@ class ShiftCommandExtractor:
                 raw_query=q
             )
 
+        # Quality Gate Check Queries
+        if any(k in q_lower for k in ["quality", "completeness", "score", "quality score", "check draft"]):
+            return ShiftCommand(
+                command_type=ShiftCommandType.CHECK_QUALITY,
+                handover_number=handover_number,
+                unit_id=unit_id,
+                raw_query=q
+            )
+
+        # Voice Log Ingestion Queries
+        if any(k in q_lower for k in ["voice note", "voice log", "audio note", "spoken log", "field recording"]):
+            return ShiftCommand(
+                command_type=ShiftCommandType.PROCESS_VOICE_NOTE,
+                unit_id=unit_id,
+                description=q,
+                raw_query=q
+            )
+
         # B. Audit history queries
         if any(k in q_lower for k in ["audit", "history", "who approved", "what changed", "audit log"]):
+
             return ShiftCommand(
                 command_type=ShiftCommandType.GET_AUDIT_HISTORY,
                 handover_number=handover_number,

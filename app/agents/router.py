@@ -143,10 +143,10 @@ class IntentRouter:
                 )
             elif forced in ["LOOP", "LOOP_ENGINEERING"]:
                 return RoutingResult(
-                    intent=AgentIntent.LOOP_ENGINEERING,
+                    intent=AgentIntent.QA,
                     confidence=1.0,
                     reason="Forced intent via context metadata.",
-                    target_agents=["loop_engineering_agent"],
+                    target_agents=["qa_technical_agent"],
                     requires_clarification=False,
                     risk_level=RiskLevel.LOW
                 )
@@ -176,30 +176,31 @@ class IntentRouter:
         has_loop = bool(self._loop_regex.search(cleaned))
         has_procedure = bool(self._procedure_regex.search(cleaned))
 
-        # 3. Multi-Agent Intent Detection (Handover update + Loop/Knowledge retrieval)
+        # 3. Multi-Agent Intent Detection (Handover update + Technical Knowledge retrieval)
         if has_shift and (has_procedure or has_loop):
-            partner_agent = "loop_engineering_agent" if has_loop else "qa_technical_agent"
+            partner_agent = "qa_technical_agent"
             logfire.info(f"Router matched MULTI_AGENT intent for query: '{cleaned[:50]}...'")
             return RoutingResult(
                 intent=AgentIntent.MULTI_AGENT,
                 confidence=0.95,
-                reason="Query requires both Shift Handover logging and Technical Engineering/QA lookup.",
+                reason="Query requires both Shift Handover logging and Technical QA lookup.",
                 target_agents=["shift_handover_agent", partner_agent],
                 requires_clarification=False,
                 risk_level=RiskLevel.LOW
             )
 
-        # 4. Loop Engineering Domain
+        # 4. Technical QA Domain (including Loop/Instrumentation queries)
         if has_loop:
-            logfire.info(f"Router matched LOOP_ENGINEERING intent for query: '{cleaned[:50]}...'")
+            logfire.info(f"Router matched QA intent for loop query: '{cleaned[:50]}...'")
             return RoutingResult(
-                intent=AgentIntent.LOOP_ENGINEERING,
+                intent=AgentIntent.QA,
                 confidence=0.95,
-                reason="Matched instrumentation and control loop engineering query.",
-                target_agents=["loop_engineering_agent"],
+                reason="Matched instrumentation and control engineering QA query.",
+                target_agents=["qa_technical_agent"],
                 requires_clarification=False,
                 risk_level=RiskLevel.LOW
             )
+
 
         # 5. Shift Handover Domain
         if has_shift:

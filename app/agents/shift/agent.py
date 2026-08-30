@@ -24,6 +24,8 @@ from app.agents.shift.contracts import (
 )
 from app.agents.shift.command import ShiftCommand, ShiftCommandType
 from app.agents.shift.extractor import ShiftCommandExtractor
+from app.agents.shift.quality_gate import shift_quality_gate
+from app.agents.shift.voice import shift_voice_service
 from app.repositories.shift_handover_repository import (
     ShiftHandoverNotFoundError,
     ConcurrencyConflictError,
@@ -59,6 +61,8 @@ class ShiftHandoverAgent(BaseAgent):
                 "safety_status",
                 "audit_history",
                 "operational_queries",
+                "process_voice_note",
+                "check_quality",
             ],
             supports_streaming=True
         )
@@ -137,8 +141,15 @@ class ShiftHandoverAgent(BaseAgent):
             elif cmd_type == ShiftCommandType.UPDATE_HANDOVER:
                 return self._handle_update(db, command, actor_id, actor_role, request, t_start)
 
+            elif cmd_type == ShiftCommandType.CHECK_QUALITY:
+                return self._handle_check_quality(db, command, request, t_start)
+
+            elif cmd_type == ShiftCommandType.PROCESS_VOICE_NOTE:
+                return self._handle_voice_note(db, command, actor_id, actor_role, request, t_start)
+
             elif cmd_type == ShiftCommandType.GET_SAFETY_STATUS:
                 return self._handle_safety_status(db, command, request, t_start)
+
 
             elif cmd_type == ShiftCommandType.ADD_SAFETY_ITEM:
                 return self._handle_add_safety_item(db, command, request, t_start)
@@ -419,6 +430,70 @@ class ShiftHandoverAgent(BaseAgent):
             lines.append(f"- `{ts}` | **{a.action}** | `{a.from_state} -> {a.to_state}` | Actor: `{a.actor_id}` ({a.actor_role}){r}")
 
         return self._build_result(request.request_id, "\n".join(lines), "audit_history", t_start=t_start, metadata={"audit_count": len(audits)})
+
+    def _handle_check_quality(self, db: Any, command: ShiftCommand, request: AgentRequest, t_start: float) -> AgentResult:
+        model = self._resolve_handover(db, command)
+        if not model:
+            return self._build_result(request.request_id, "Please specify a handover or unit to evaluate quality.", "quality_check_failed", t_start=t_start)
+
+        domain_data = self.service.orm_to_domain(model).data
+        report = shift_quality_gate.evaluate(domain_data, handover_id=model.id)
+
+        status_emoji = "✅" if report.is_passing else "⚠️"
+        lines = [
+            f"{status_emoji} **Shift Handover Quality & Completeness Report**:",
+            f"- **Handover**: `{model.handover_number}` (Unit: `{model.unit_id}`)",
+            f"- **Overall Score**: **{report.overall_score:.1f}%** (Passing Threshold: {report.passing_threshold:.1f}%)",
+            f"- **Status**: `{'PASSED' if report.is_passing else 'NEEDS IMPROVEMENT'}`",
+            "",
+            "📊 **Dimension Breakdown**:"
+        ]
+        for dim, score in report.dimension_scores.items():
+            lines.append(f"  - **{dim.replace('_', ' ').title()}**: {score} pts")
+
+        if report.missing_items:
+            lines.append("\n❌ **Missing / Deficient Items**:")
+            for mi in report.missing_items:
+                lines.append(f"  - {mi}")
+
+        if report.recommendations:
+            lines.append("\n💡 **Actionable Recommendations**:")
+            for rec in report.recommendations:
+                lines.append(f"  - {rec}")
+
+        return self._build_result(
+            request.request_id,
+            "\n".join(lines),
+            "quality_check",
+            t_start=t_start,
+            metadata={"overall_score": report.overall_score, "is_passing": report.is_passing}
+        )
+
+    def _handle_voice_note(self, db: Any, command: ShiftCommand, actor_id: str, actor_role: ShiftHandoverRole, request: AgentRequest, t_start: float) -> AgentResult:
+        res = shift_voice_service.process_voice_note(
+            transcript=request.message,
+            actor_id=actor_id,
+            actor_role=actor_role,
+            unit_id=command.unit_id,
+            db=db
+        )
+
+        msg = (
+            f"🎙️ **Field Voice Note Ingested**:\n"
+            f"- **Unit**: `{res.unit_id}`\n"
+            f"- **Extracted Tags**: `{', '.join(res.extracted_equipment_tags) if res.extracted_equipment_tags else 'None'}`\n"
+            f"- **Abnormalities Extracted**: {len(res.extracted_abnormalities)}\n"
+            f"- **LOTO / Permits Extracted**: {len(res.extracted_loto_items)}\n"
+            f"- **Summary**: {res.summary_message}"
+        )
+        return self._build_result(
+            request.request_id,
+            msg,
+            "process_voice_note",
+            t_start=t_start,
+            metadata={"unit_id": res.unit_id, "tags": res.extracted_equipment_tags}
+        )
+
 
     def _build_result(
         self,

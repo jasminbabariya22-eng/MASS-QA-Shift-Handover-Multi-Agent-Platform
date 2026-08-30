@@ -9,11 +9,12 @@ class AgentIntent(str, Enum):
     QA = "QA"
     SHIFT = "SHIFT"
     SHIFT_HANDOVER = "SHIFT"  # Backwards compatibility alias
-    LOOP_ENGINEERING = "LOOP_ENGINEERING"
+    LOOP_ENGINEERING = "QA"  # Alias to QA
     MULTI_AGENT = "MULTI_AGENT"
     GENERAL = "GENERAL"
     HIGH_RISK = "HIGH_RISK"
     UNKNOWN = "UNKNOWN"
+
 
 
 class RiskLevel(str, Enum):
