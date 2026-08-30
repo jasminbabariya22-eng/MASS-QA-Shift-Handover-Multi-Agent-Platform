@@ -195,9 +195,22 @@ class DatabasePersistenceService:
         except Exception as e:
             db.rollback()
             logfire.error(f"Error creating message: {e}")
-            raise
+    @staticmethod
+    def get_conversation_messages(
+        db: Session,
+        conversation_id: str,
+        limit: int = 100
+    ) -> List[Message]:
+        return (
+            db.query(Message)
+            .filter(Message.conversation_id == conversation_id)
+            .order_by(Message.created_at.asc())
+            .limit(limit)
+            .all()
+        )
 
     # --- Citation Operations ---
+
 
     @staticmethod
     def create_citations(

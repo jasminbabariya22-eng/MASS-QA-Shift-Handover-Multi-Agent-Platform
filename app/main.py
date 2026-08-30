@@ -1051,8 +1051,64 @@ def api_v1_token(req: TokenRequest, raw_request: Request = None, db: Session = D
 
 
 # ============================================================
+# POSTGRESQL CHAT CONVERSATION HISTORY ENDPOINTS
+# ============================================================
+
+@app.get("/conversations")
+def list_user_conversations_endpoint(
+    db: Session = Depends(get_db),
+    current_user: UserPayload = Depends(get_current_user)
+):
+    """
+    List all saved chat conversations for current user directly from PostgreSQL database.
+    """
+    convs = db_service.list_user_conversations(db, user_id=current_user.user_id)
+    return {
+        "status": "success",
+        "count": len(convs),
+        "conversations": [
+            {
+                "id": c.session_id or c.id,
+                "conversation_id": c.id,
+                "title": c.title or "New Conversation",
+                "status": c.status,
+                "updatedAt": c.updated_at.strftime("%I:%M %p") if c.updated_at else "Just now"
+            }
+            for c in convs
+        ]
+    }
+
+
+@app.get("/conversations/{session_id}/messages")
+def get_conversation_messages_endpoint(
+    session_id: str,
+    db: Session = Depends(get_db),
+    current_user: UserPayload = Depends(get_current_user)
+):
+    """
+    Retrieve full message history for a specific conversation session from PostgreSQL database.
+    """
+    conv = db_service.get_or_create_conversation(db, session_id=session_id, user_id=current_user.user_id)
+    msgs = db_service.get_conversation_messages(db, conversation_id=conv.id)
+    return {
+        "status": "success",
+        "session_id": session_id,
+        "title": conv.title,
+        "messages": [
+            {
+                "role": m.role.lower(),
+                "content": m.content,
+                "created_at": m.created_at.isoformat() if m.created_at else None
+            }
+            for m in msgs
+        ]
+    }
+
+
+# ============================================================
 # HUMAN-IN-THE-LOOP (HITL) APPROVAL GOVERNANCE ENDPOINTS
 # ============================================================
+
 
 @app.get("/approvals")
 def list_approvals_endpoint(

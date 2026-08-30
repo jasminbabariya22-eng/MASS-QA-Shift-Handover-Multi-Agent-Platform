@@ -17,11 +17,33 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('qa');
   const [systemOnline, setSystemOnline] = useState(false);
 
+  const fetchDbConversations = async (userToken) => {
+    try {
+      const res = await fetch(`${BACKEND_URL}/conversations`, {
+        headers: { 'Authorization': `Bearer ${userToken}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.conversations && data.conversations.length > 0) {
+          setChatSessions(data.conversations);
+          setActiveSessionId(data.conversations[0].id);
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn("DB conversation fetch fallback to local storage:", e);
+    }
+  };
+
   useEffect(() => {
     const savedAuth = localStorage.getItem('mass_auth_session');
     if (savedAuth) {
       try {
-        setAuth(JSON.parse(savedAuth));
+        const parsedAuth = JSON.parse(savedAuth);
+        setAuth(parsedAuth);
+        if (parsedAuth.token) {
+          fetchDbConversations(parsedAuth.token);
+        }
       } catch (e) {
         localStorage.removeItem('mass_auth_session');
       }
@@ -49,6 +71,7 @@ export default function App() {
       .then(res => res.ok && setSystemOnline(true))
       .catch(() => setSystemOnline(false));
   }, []);
+
 
   const saveSessionsToStorage = (sessions) => {
     setChatSessions(sessions);
