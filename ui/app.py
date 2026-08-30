@@ -24,7 +24,7 @@ except Exception as e:
 
 # Page Configuration
 st.set_page_config(
-    page_title="MASS QA & Shift Handover Intelligence OS",
+    page_title="MASS Operations Intelligence OS",
     page_icon=":material/bolt:",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -36,7 +36,7 @@ USER_AVATAR = "👤"
 # Backend configuration
 BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:8000")
 
-# Custom Premium CSS Injection
+# Custom Premium Dark Industrial CSS Styling
 st.html("""
 <style>
     /* Global Container Styling */
@@ -44,28 +44,29 @@ st.html("""
         background-color: #0B0F19;
     }
     
-    /* Header Title Glow */
+    /* Header Title Container */
     .main-title-container {
-        background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
         border: 1px solid rgba(99, 102, 241, 0.3);
         border-radius: 14px;
-        padding: 20px 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        padding: 20px 26px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
     }
     
     .main-title-text {
-        font-size: 2.2rem;
+        font-size: 2.1rem;
         font-weight: 800;
         background: linear-gradient(90deg, #818CF8 0%, #34D399 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 6px;
+        margin-bottom: 4px;
+        letter-spacing: -0.5px;
     }
     
     .main-subtitle-text {
         color: #9CA3AF;
-        font-size: 1.05rem;
+        font-size: 1.0rem;
         margin: 0;
     }
 
@@ -74,8 +75,8 @@ st.html("""
         background-color: #111827;
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 10px;
-        padding: 12px 16px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        padding: 14px 18px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
     }
     
     div[data-testid="stMetricLabel"] {
@@ -86,7 +87,7 @@ st.html("""
 
     div[data-testid="stMetricValue"] {
         color: #F9FAFB !important;
-        font-size: 1.5rem !important;
+        font-size: 1.45rem !important;
         font-weight: 700 !important;
     }
 
@@ -116,14 +117,14 @@ if "auth_token" not in st.session_state:
     st.session_state.auth_token = ""
 
 if "logged_in_user" not in st.session_state:
-    st.session_state.logged_in_user = "op_salem_01"
+    st.session_state.logged_in_user = "op_console_1"
 if "logged_in_role" not in st.session_state:
     st.session_state.logged_in_role = "CONSOLE_OPERATOR"
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.markdown("### :material/bolt: **MASS QA OS**")
-    st.caption("Production Multi-Agent Platform v3.2")
+    st.markdown("### :material/bolt: **MASS Operations Portal**")
+    st.caption("Petroleum Refinery Multi-Agent Platform v2.5")
     
     # System Status Card
     with st.container(border=True):
@@ -136,15 +137,15 @@ with st.sidebar:
                 deps = data.get("dependencies", {})
                 st.caption(f"• **PostgreSQL 18**: `{deps.get('postgresql', 'connected')}`")
                 st.caption(f"• **Qdrant Cloud**: `2,079 vectors (3072d)`")
-                st.caption(f"• **Cache**: `{deps.get('cache', 'active')}`")
-                st.caption(f"• **LLM Gateway**: `{deps.get('llm_gateway', 'active')}`")
+                st.caption(f"• **Model Mesh**: `3 Open-Source Models`")
+                st.caption(f"• **Guardrails**: `{deps.get('guardrails', 'active')}`")
             else:
                 st.badge("API Degraded", icon=":material/warning:", color="orange")
         except Exception:
             st.badge("API Offline", icon=":material/error:", color="red")
 
     # Operator Login & Role Switcher
-    st.markdown("##### :material/person: Operator login & governance")
+    st.markdown("##### :material/person: Operator login & RBAC")
     ROLE_OPTIONS = [
         "CONSOLE_OPERATOR",
         "SHIFT_SUPERVISOR",
@@ -182,7 +183,7 @@ with st.sidebar:
             st.error(f"Login error: {ex}")
 
     if st.session_state.auth_token:
-        st.caption(f"Active user: **{st.session_state.logged_in_user}** (`{st.session_state.logged_in_role}`)")
+        st.caption(f"Active User: **{st.session_state.logged_in_user}** (`{st.session_state.logged_in_role}`)")
 
     with st.expander("Session details", icon=":material/tune:", expanded=False):
         token_input = st.text_input("Bearer JWT token", value=st.session_state.auth_token, type="password", key="sidebar_bearer_jwt_token")
@@ -209,19 +210,18 @@ with st.sidebar:
     st.markdown("##### :material/smart_toy: Active multi-agent mesh")
     with st.container(border=True):
         st.markdown("**:material/find_in_page: QA technical agent**")
-        st.caption("SOPs, P&IDs, Technical Manuals (3072d)")
+        st.caption("SOPs, P&IDs, Equipment Specs (Qdrant 3072d)")
         st.markdown("**:material/assignment: Shift handover agent**")
-        st.caption("Turnover FSM, PostgreSQL, LOTO, Quality Gate")
+        st.caption("Turnover FSM, PostgreSQL, Voice Ingestion, Quality Gate")
         st.markdown("**:material/gavel: AI harness & HITL gate**")
         st.caption("Safety Interlock & Authorization Gate")
-
 
 
 # --- MAIN HEADER BANNER ---
 st.html("""
 <div class="main-title-container">
-    <div class="main-title-text">⚡ MASS QA & Shift Handover Intelligence OS</div>
-    <div class="main-subtitle-text">Refinery operating procedures, role-governed shift handovers, and real-time field voice intelligence</div>
+    <div class="main-title-text">⚡ MASS Operations Intelligence OS</div>
+    <div class="main-subtitle-text">Refinery standard operating procedures, role-governed shift handovers, and real-time field voice intelligence</div>
 </div>
 """)
 
@@ -232,86 +232,45 @@ with col_kpi1:
 with col_kpi2:
     st.metric(label="HITL safety interlocks", value="0 pending", delta="All clear", delta_color="normal")
 with col_kpi3:
-    st.metric(label="Field voice ingestion", value="Active", delta="Gemini Multimodal")
+    st.metric(label="Field voice ingestion", value="Active", delta="Gemini 3.6 Flash")
 with col_kpi4:
     st.metric(label="AI quality gate avg", value="94.2%", delta="+5.8% compliance")
 
 st.space("small")
 
-# --- MAIN INTERFACE TABS ---
-tab_chat, tab_approvals, tab_audit = st.tabs([
-    "💬 Operations & QA chat",
+# --- MAIN DOMAIN-FOCUSED TABS ---
+tab_chat, tab_voice_shift, tab_approvals, tab_audit = st.tabs([
+    "💬 Technical QA & SOP search",
+    "🎙️ Field voice note & shift handover",
     "🛡️ HITL governance center",
-    "📜 System audit telemetry"
+    "📊 System audit & telemetry"
 ])
 
+
 # ============================================================
-# TAB 1: OPERATIONS & QA CHAT
+# TAB 1: TECHNICAL QA & SOP SEARCH
 # ============================================================
 with tab_chat:
-    
-    # 🎙️ Live Microphone Voice Recording Section
-    with st.container(border=True):
-        st.markdown("##### :material/mic: Live microphone voice recorder")
-        st.caption("Click the microphone button below to record your real-time spoken voice query or field walkdown note directly from your microphone:")
-        
-        audio_file = st.audio_input("Record live voice query", key="live_voice_recorder")
-        if audio_file is not None:
-            audio_bytes = audio_file.read()
-            mime_type = getattr(audio_file, "type", "audio/wav") or "audio/wav"
-            
-            with st.spinner("Transcribing spoken voice audio via AI Speech-to-Text API..."):
-                try:
-                    res = requests.post(
-                        f"{BACKEND_URL}/api/v1/voice/transcribe",
-                        files={"file": ("voice_recording.wav", audio_bytes, mime_type)},
-                        timeout=15
-                    )
-                    if res.status_code == 200:
-                        transcription = res.json().get("transcript", "")
-                    else:
-                        transcription = "Field voice note for CDU-101: Found minor flange weeping on Pump P-101A discharge valve."
-                except Exception:
-                    transcription = "Field voice note for CDU-101: Found minor flange weeping on Pump P-101A discharge valve."
+    st.markdown("#### :material/manage_search: Refinery Technical Intelligence & SOP Lookup")
+    st.caption("Ask questions about Standard Operating Procedures (SOPs), Emergency Procedures (EOPs), Piping & Instrumentation Diagrams (P&IDs), and equipment manuals:")
 
-            if transcription:
-                st.success(f"**Transcribed voice query**: *\"{transcription}\"*", icon=":material/check_circle:")
-                if st.button("Execute transcribed voice query", icon=":material/bolt:", type="primary", key="exec_live_voice_btn"):
-                    st.session_state.pending_voice_prompt = transcription
-                    st.rerun()
+    # Quick Starter Prompt Buttons
+    st.markdown("##### :material/lightbulb: Quick operational prompts")
+    col_p1, col_p2, col_p3 = st.columns(3)
+    with col_p1:
+        if st.button("Startup procedure for Crude Charge Pump P-101", icon=":material/play_arrow:", key="prompt_p1"):
+            st.session_state.pending_prompt = "What is the startup procedure for crude charge pump P-101?"
+            st.rerun()
+    with col_p2:
+        if st.button("Record abnormal vibration on C-101 & check startup SOP", icon=":material/hub:", key="prompt_p2"):
+            st.session_state.pending_prompt = "Record abnormal vibration on C-101 for Unit CDU-101 handover and check the startup procedure"
+            st.rerun()
+    with col_p3:
+        if st.button("Shut down pump P-101 immediately (Safety Test)", icon=":material/block:", key="prompt_p3"):
+            st.session_state.pending_prompt = "Shut down pump P-101 immediately"
+            st.rerun()
 
-    # ⚙️ Field Operator Text Log & AI Quality Control Section
-    with st.expander("Field operator text log & AI quality gate", icon=":material/verified_user:", expanded=False):
-        col_v1, col_v2 = st.columns(2)
-        with col_v1:
-            st.markdown("###### :material/edit_note: Spoken field voice note ingestion")
-            voice_unit = st.selectbox("Select plant unit", ["CDU-101", "HCU-202", "VDU-102", "U-101"], key="voice_unit")
-            spoken_text = st.text_area("Field walkdown note transcript", value="Field walkdown note for CDU-101: Found minor flange weeping on Pump P-101A discharge valve and LOTO active on compressor C-101.", height=85)
-            if st.button("Submit field voice note", icon=":material/send:", key="submit_voice_btn", type="primary"):
-                st.session_state.pending_voice_prompt = f"Record field voice note for unit {voice_unit}: {spoken_text}"
-                st.rerun()
-
-        with col_v2:
-            st.markdown("###### :material/fact_check: Handover quality & completeness gate")
-            eval_unit = st.selectbox("Select unit draft to evaluate", ["CDU-101", "HCU-202", "VDU-102", "U-101"], key="eval_unit")
-            if st.button("Evaluate quality score (0–100%)", icon=":material/analytics:", key="check_quality_btn"):
-                st.session_state.pending_voice_prompt = f"Check quality score for {eval_unit} shift handover draft"
-                st.rerun()
-
-    # Quick Starter Prompts
-    with st.expander("Live demonstration prompts", icon=":material/lightbulb:", expanded=False):
-        col_q1, col_q2, col_q3 = st.columns(3)
-        with col_q1:
-            st.caption("📋 **Shift handover**")
-            st.code("Create a day shift handover for Unit CDU-101", language="text")
-            st.code("Add abnormal vibration observed on compressor C-101 to draft", language="text")
-        with col_q2:
-            st.caption("🤖 **A2A multi-agent query**")
-            st.code("Record abnormal vibration on C-101 in current handover and show the startup procedure", language="text")
-        with col_q3:
-            st.caption("📚 **Technical QA / SOP**")
-            st.code("What is the startup procedure for crude charge pump P-101?", language="text")
-            st.code("Shut down pump P-101 immediately (Safety Refusal Test)", language="text")
+    st.space("small")
 
     # Render Conversation History
     for msg in st.session_state.messages:
@@ -352,12 +311,12 @@ with tab_chat:
                             if preview:
                                 st.caption(f"> {preview[:180]}...")
 
-    # User Input Handling
-    chat_prompt = st.chat_input("Enter technical query, shift command, or A2A task...")
+    # Chat Input Box
+    chat_prompt = st.chat_input("Enter technical query, equipment tag, or shift handover prompt...")
     prompt = None
-    if "pending_voice_prompt" in st.session_state and st.session_state.pending_voice_prompt:
-        prompt = st.session_state.pending_voice_prompt
-        st.session_state.pending_voice_prompt = None
+    if "pending_prompt" in st.session_state and st.session_state.pending_prompt:
+        prompt = st.session_state.pending_prompt
+        st.session_state.pending_prompt = None
     elif chat_prompt:
         prompt = chat_prompt
 
@@ -473,11 +432,90 @@ with tab_chat:
 
 
 # ============================================================
-# TAB 2: HITL APPROVAL GOVERNANCE CENTER
+# TAB 2: FIELD VOICE NOTE & SHIFT HANDOVER OPERATIONS
+# ============================================================
+with tab_voice_shift:
+    st.markdown("#### :material/assignment: Field Operator Voice Ingestion & Shift Handover Control")
+    st.caption("Record field walkdown voice notes, execute shift handover state transitions, and evaluate 0–100% Quality Gate completeness scores.")
+
+    col_voice_left, col_voice_right = st.columns(2)
+
+    # 🎙️ LEFT PANEL: Live Voice Recorder & Field Note Ingestion
+    with col_voice_left:
+        with st.container(border=True):
+            st.markdown("##### :material/mic: Live field microphone voice recorder")
+            st.caption("Speak your plant walkdown notes (e.g. equipment leaks, valve positions, LOTO tags). The Gemini Audio engine automatically transcribes and extracts structured operational tags:")
+            
+            target_unit = st.selectbox("Target refinery unit", ["CDU-101", "HCU-202", "VDU-102", "U-101"], key="voice_rec_unit")
+            audio_file = st.audio_input("Record live field voice note", key="live_voice_recorder_widget")
+            
+            if audio_file is not None:
+                audio_bytes = audio_file.read()
+                mime_type = getattr(audio_file, "type", "audio/wav") or "audio/wav"
+                
+                with st.spinner("Transcribing spoken voice audio via Gemini 3.6 Flash..."):
+                    try:
+                        res = requests.post(
+                            f"{BACKEND_URL}/api/v1/voice/transcribe",
+                            files={"file": ("voice_recording.wav", audio_bytes, mime_type)},
+                            timeout=15
+                        )
+                        if res.status_code == 200:
+                            transcription = res.json().get("transcript", "")
+                        else:
+                            transcription = f"Field voice note for unit {target_unit}: Found minor flange weeping on Pump P-101A discharge valve."
+                    except Exception:
+                        transcription = f"Field voice note for unit {target_unit}: Found minor flange weeping on Pump P-101A discharge valve."
+
+                if transcription:
+                    st.success(f"**Transcribed Voice Note**: *\"{transcription}\"*", icon=":material/check_circle:")
+                    if st.button("Log voice note to shift database", icon=":material/send:", type="primary", key="exec_live_voice_btn"):
+                        st.session_state.pending_prompt = f"Record field voice note for unit {target_unit}: {transcription}"
+                        st.rerun()
+
+            st.divider()
+
+            st.markdown("##### :material/edit_note: Text-based field note fallback")
+            text_note = st.text_area("Field walkdown note transcript", value="Field walkdown note for CDU-101: Found minor flange weeping on Pump P-101A discharge valve and LOTO active on compressor C-101.", height=80, key="manual_text_note_input")
+            if st.button("Submit field text note", icon=":material/send:", key="submit_manual_voice_btn"):
+                st.session_state.pending_prompt = f"Record field voice note for unit {target_unit}: {text_note}"
+                st.rerun()
+
+    # 📋 RIGHT PANEL: Shift Handover Form & AI Quality Gate Evaluator
+    with col_voice_right:
+        with st.container(border=True):
+            st.markdown("##### :material/fact_check: Shift handover quality gate evaluator")
+            st.caption("Evaluate shift handover draft completeness across 4 operational dimensions (Summary, Safety LOTO, Equipment, Permits):")
+            
+            eval_unit_sel = st.selectbox("Select unit draft to evaluate", ["CDU-101", "HCU-202", "VDU-102", "U-101"], key="eval_unit_select_box")
+            
+            if st.button("Evaluate Quality Gate score (0–100%)", icon=":material/analytics:", type="primary", key="eval_quality_gate_btn"):
+                st.session_state.pending_prompt = f"Check quality score for {eval_unit_sel} shift handover draft"
+                st.rerun()
+
+        with st.container(border=True):
+            st.markdown("##### :material/account_tree: Shift handover state machine (FSM)")
+            st.caption("Execute role-governed shift turnover actions in PostgreSQL 18:")
+            
+            col_fsm1, col_fsm2 = st.columns(2)
+            with col_fsm1:
+                fsm_unit = st.selectbox("Unit ID", ["CDU-101", "HCU-202", "VDU-102"], key="fsm_unit_select")
+                if st.button("Create shift handover draft", icon=":material/add_box:", key="fsm_create_btn"):
+                    st.session_state.pending_prompt = f"Create a day shift handover for Unit {fsm_unit}"
+                    st.rerun()
+            
+            with col_fsm2:
+                if st.button("Submit handover for supervisor review", icon=":material/send:", key="fsm_submit_btn"):
+                    st.session_state.pending_prompt = f"Submit shift handover for Unit {fsm_unit}"
+                    st.rerun()
+
+
+# ============================================================
+# TAB 3: HITL APPROVAL GOVERNANCE CENTER
 # ============================================================
 with tab_approvals:
-    st.markdown("### :material/gavel: Human-in-the-Loop (HITL) approval governance center")
-    st.markdown("Review high-risk operational actions, emergency overrides, or shift turnover sign-offs before execution.")
+    st.markdown("#### :material/gavel: Human-in-the-Loop (HITL) Approval Governance Center")
+    st.caption("Review high-risk operational actions, emergency overrides, or shift turnover sign-offs before execution.")
 
     headers = {}
     if st.session_state.auth_token:
@@ -486,11 +524,13 @@ with tab_approvals:
     try:
         appr_resp = requests.get(f"{BACKEND_URL}/approvals", headers=headers, timeout=4)
         if appr_resp.status_code == 200:
-            approvals = appr_resp.json()
+            res_json = appr_resp.json()
+            approvals = res_json.get("approvals", []) if isinstance(res_json, dict) else res_json
             if not approvals:
                 st.success("No pending approval requests in queue.", icon=":material/check_circle:")
             else:
                 for app_item in approvals:
+
                     with st.container(border=True):
                         st.markdown(f"**Action**: `{app_item.get('action')}` | **Unit**: `{app_item.get('unit_id', 'N/A')}`")
                         st.caption(f"Requested by: `{app_item.get('requested_by')}` | Status: `{app_item.get('status')}`")
@@ -516,22 +556,29 @@ with tab_approvals:
 
 
 # ============================================================
-# TAB 3: SYSTEM AUDIT TELEMETRY
+# TAB 4: SYSTEM AUDIT & TELEMETRY
 # ============================================================
 with tab_audit:
-    st.markdown("### :material/history: System telemetry & compliance audit logs")
-    st.markdown("Track end-to-end multi-agent execution spans, logfire tracing, and database session state.")
+    st.markdown("#### :material/history: System Telemetry, Model Mesh & Audit Logs")
+    st.caption("Track end-to-end multi-agent execution spans, Logfire distributed tracing, Model Mesh status, and database connection state.")
 
     col_t1, col_t2 = st.columns(2)
     with col_t1:
         with st.container(border=True):
             st.markdown("##### :material/database: Active database connection")
             st.code(f"Database: PostgreSQL 18 (MASS.public)\nHost: localhost:5433\nSession ID: {st.session_state.session_id}", language="text")
+            st.markdown("##### :material/hub: Open-source model mesh catalog")
+            st.caption("• **Planner**: `llama-3.1-8b-instant` (Sub-100ms)")
+            st.caption("• **Conversational**: `mixtral-8x7b-32768` (Balanced MoE)")
+            st.caption("• **Heavy Reasoning**: `llama-3.3-70b-versatile` (High RAG Precision)")
+
     with col_t2:
         with st.container(border=True):
             st.markdown("##### :material/monitor_heart: Logfire observability status")
             st.caption(f"Status: **{LOGFIRE_STATUS}**")
             st.markdown("[View Logfire Tracing Dashboard](https://logfire-us.pydantic.dev/jasminbabariya7/mass-qa-chatbot)")
+
+    st.space("small")
 
     st.markdown("##### :material/list_alt: Session audit history")
     if st.session_state.messages:
