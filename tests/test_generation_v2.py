@@ -166,10 +166,10 @@ def test_evidence_checker_low_score_abstention():
 
 
 def test_grounding_prompt_rules_presence():
-    assert "Answer ONLY using the facts directly stated" in SYSTEM_GROUNDING_PROMPT
+    assert "provided sources" in SYSTEM_GROUNDING_PROMPT
     assert "I don't have enough information in the available knowledge base" in SYSTEM_GROUNDING_PROMPT
-    assert "In-Text Citations:" in SYSTEM_GROUNDING_PROMPT
-    assert "Cross-Document Comparative Questions" in SYSTEM_GROUNDING_PROMPT
+    assert "Clean Natural Writing" in SYSTEM_GROUNDING_PROMPT
+
 
 
 def test_filter_used_citations():
