@@ -1,8 +1,13 @@
-# 16 — LLM Gateway with Portkey
+# 09. LLM Gateway & Open-Source Model Mesh Architecture
 
-> **One-line summary:** An LLM Gateway is a proxy layer that sits between your application and any LLM provider — adding resilience, observability, and cost control with zero changes to your business logic.
+> **Document Version:** 2.0.0  
+> **Status:** APPROVED & IMPLEMENTED  
+> **Subsystem:** LLM Gateway & Model Mesh ([`app/gateway/client.py`](file:///d:/Chatboat/app/gateway/client.py), [`app/services/llm/mesh_service.py`](file:///d:/Chatboat/app/services/llm/mesh_service.py))
+
+The **LLM Gateway & Open-Source Model Mesh Engine** acts as the central resilience, routing, observability, and cost-optimization layer wrapping all language model inference across the platform.
 
 ---
+
 
 ## What Is an LLM Gateway?
 

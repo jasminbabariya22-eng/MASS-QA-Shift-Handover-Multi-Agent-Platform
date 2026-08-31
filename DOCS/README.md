@@ -1,4 +1,4 @@
-# MASS QA & Shift Handover Multi-Agent Platform — Documentation Hub
+# MASS QA & Shift Handover Multi-Agent Platform — Technical Documentation Hub
 
 Welcome to the central technical documentation repository for the **MASS QA & Shift Handover Multi-Agent Platform**.
 
@@ -6,39 +6,39 @@ Welcome to the central technical documentation repository for the **MASS QA & Sh
 
 ---
 
-## 1. Documentation Index & Recommended Reading Order
+## 1. Sequential Documentation Index
 
 ```
 DOCS/
-├── 00_PROJECT_OVERVIEW.md                    # 1. Problem domain, features, open-source models & tech stack
-├── 01_SYSTEM_ARCHITECTURE.md                 # 2. Subsystem architecture & data topology
-├── 02_BASELINE_RAG_QA.md                     # 3. Multimodal RAG pipeline & frozen Qdrant vector database
-├── 03_MULTI_AGENT_FOUNDATION.md              # 4. BaseAgent interface, registry & strongly typed contracts
-├── 04_AGENT_ORCHESTRATOR_ROUTER.md           # 5. Intent routing, risk levels & safety interlocks
-├── 05_QA_AGENT_ADAPTER.md                    # 6. Multi-agent adapter wrapping frozen RAG engine
-├── 06_SHIFT_HANDOVER_WORKFLOW.md             # 7. Finite state machine, transition rules & role matrix
-├── 07_SHIFT_HANDOVER_DATABASE.md             # 8. PostgreSQL 18 relational persistence & optimistic locking
-├── 08_SHIFT_HANDOVER_AGENT.md                # 9. Conversational shift interface, voice & quality gate
-├── 09_API_CHATBOT_INTEGRATION.md             # 10. FastAPI Gateway, SSE streaming & REST routes
-├── 09_LLM_GATEWAY.md                         # 11. Model Mesh Gateway (Mesh API & 3 Open-Source Models)
-├── 10_HARNESS_ENGINEERING.md                 # 12. AI Harness governance, budget tracking & secret masking
-├── 11_HITL_HUMAN_IN_THE_LOOP.md              # 13. Human authorization gates, risk matrix & replay checks
-├── 12_SECURITY_OBSERVABILITY_CACHING.md      # 14. JWT auth, Logfire distributed tracing & caching invariants
-├── 13_END_TO_END_WORKFLOW.md                 # 15. Real-world operational execution flows
-├── 14_TESTING_DEPLOYMENT_OPERATIONS.md       # 16. Verified test baselines, Docker runbooks & deployment
-├── 15_P2P_BIDIRECTIONAL_AGENT_COMMUNICATION.md # 17. Multi-turn Bidirectional P2P Peer Exchange Protocol
-├── 16_VOICE_TRANSCRIPTION_AND_INGESTION.md  # 18. Gemini 3.6 Flash audio speech-to-text transcriber
-├── 17_AI_QUALITY_GATE_ENGINE.md              # 19. 0-100% Shift Handover Completeness Scoring Engine
-├── 18_REACT_VITE_SPA_FRONTEND.md             # 20. React Single-Page Frontend & ChatGPT Chat History Sidebar
-├── 19_DATABASE_AUTHENTICATION_AND_RBAC.md   # 21. Database `login_id` & `password` auth and 8 Personnel Roles Matrix
-├── 15_GLOSSARY.md                            # 22. Technical & industrial petroleum terminology
-└── DOCUMENTATION_STATUS.md                   # 23. Documentation audit, verification & status report
-
+├── 00_PROJECT_OVERVIEW.md                     # 1. Problem domain, refinery architecture, tech stack & multi-agent features
+├── 01_SYSTEM_ARCHITECTURE.md                  # 2. Subsystem topology, data flow, gateway, and multi-agent interaction
+├── 02_INGESTION_ENGINE.md                     # 3. Document parsing, structure preservation, multimodal chunking & voice ingestion
+├── 03_CHUNKING_EMBEDDING_VECTORSTORE.md       # 4. Chunking strategy, 3072-dim Gemini embeddings, Qdrant collection mass_qa_multimodal (2,079 points frozen)
+├── 04_BASELINE_RAG_QA.md                      # 5. Multimodal RAG QA pipeline, evidence checker, RAGResponse & citation preservation
+├── 05_LLM_GATEWAY_AND_MODEL_MESH.md           # 6. LLM Gateway, Model Mesh API, 3 open-source model routing, Portkey integration
+├── 06_CACHING_ARCHITECTURE.md                 # 7. Multi-tier caching architecture (Layer A Response Cache, Layer B Candidate Cache, Session Cache)
+├── 07_PROMPT_ENGINEERING_CATALOG.md          # 8. Complete prompt engineering inventory, purpose, location, and exact prompt content
+├── 08_MULTI_AGENT_FOUNDATION.md               # 9. BaseAgent interface, agent capabilities & strongly typed contracts
+├── 09_AGENT_ORCHESTRATOR_ROUTER.md            # 10. Intent routing, risk levels & safety interlocks
+├── 10_QA_AGENT_ADAPTER.md                     # 11. QA Technical Agent Adapter wrapping frozen RAG engine
+├── 11_SHIFT_HANDOVER_WORKFLOW.md              # 12. FSM state transitions, workflow engine, validation rules & personnel role permissions
+├── 12_SHIFT_HANDOVER_DATABASE.md              # 13. PostgreSQL 18 relational persistence, optimistic concurrency locking, schema definitions
+├── 13_SHIFT_HANDOVER_AGENT.md                 # 14. Conversational Shift Agent, operational logging, and voice integration
+├── 14_VOICE_TRANSCRIPTION_AND_INGESTION.md   # 15. Gemini 3.6 Flash audio speech-to-text transcriber & equipment tag extractor
+├── 15_AI_QUALITY_GATE_ENGINE.md               # 16. 0–100% Shift Handover Completeness Scoring Engine across 4 operational dimensions
+├── 16_P2P_BIDIRECTIONAL_AGENT_COMMUNICATION.md # 17. Multi-turn P2P Peer Exchange Protocol & shared session state
+├── 17_REACT_VITE_SPA_FRONTEND.md              # 18. React Vite SPA frontend (frontend/src/), ChatGPT-style Chat History Sidebar, dual-choice text/voice
+├── 18_DATABASE_AUTHENTICATION_AND_RBAC.md    # 19. Database login_id & password authentication, 8 Personnel Job Roles matrix, JWT token generation
+├── 19_HARNESS_ENGINEERING_AND_HITL.md        # 20. AI Harness governance, budget tracking, secret masking, and HITL supervisor approval queue
+├── 20_SECURITY_OBSERVABILITY_CACHING.md       # 21. Security invariants, Logfire distributed tracing, OpenTelemetry integration
+├── 21_EVALS_AND_TESTING_OPERATIONS.md        # 22. Verification test suite (232/232 tests passing), Docker runbooks, deployment & operations
+├── 22_GLOSSARY.md                             # 23. Technical & industrial petroleum refining terminology
+└── DOCUMENTATION_STATUS.md                    # 24. Documentation audit matrix & verification status
 ```
 
 ---
 
-## 2. Current Implementation Status
+## 2. Platform Verification Status
 
 ```
 ================================================================================
@@ -55,6 +55,8 @@ Step 8:  AI Quality Gate Completeness Engine (0-100%)            [VERIFIED]
 Step 9:  Model Mesh Gateway (3 Open-Source Models + Mesh API)    [VERIFIED]
 Step 10: AI Harness & HITL Risk Governance                       [VERIFIED]
 Step 11: Bidirectional P2P Peer Exchange Protocol               [VERIFIED]
+Step 12: React Vite SPA Frontend & ChatGPT Chat History Sidebar  [VERIFIED]
+Step 13: Database Auth & 8 Personnel Roles Matrix                [VERIFIED]
 --------------------------------------------------------------------------------
 TOTAL VERIFIED AUTOMATED TEST BASELINE: 232 / 232 TESTS PASSING (100%)
 ================================================================================
@@ -86,12 +88,6 @@ TOTAL VERIFIED AUTOMATED TEST BASELINE: 232 / 232 TESTS PASSING (100%)
 
 # 2. Install backend dependencies (if needed)
 pip install -r requirements.txt
-
-# 3. Ensure environment credentials in .env file:
-# MESH_API_KEY=rsk_01M18Z...
-# MESH_API_BASE_URL=https://api.meshapi.ai
-# GEMINI_API_KEY=AIzaSy...
-# POSTGRES_URL=postgresql://postgres:postgres@localhost:5433/mass_db
 ```
 
 ### Step 2: Launch FastAPI Backend Gateway (`http://localhost:8000`)
@@ -110,31 +106,17 @@ $env:LOGFIRE_IGNORE_NO_CONFIG="1"; python -m uvicorn app.main:app --host 0.0.0.0
 # Navigate to frontend directory
 cd frontend
 
-# Install frontend dependencies (lucide-react, vite, etc.)
+# Install frontend dependencies
 npm install
 
 # Launch React Vite dev server on port 5173
 npm run dev -- --host 0.0.0.0 --port 5173
 ```
 - ⚛️ **React Single-Page Portal**: [http://localhost:5173](http://localhost:5173)
-- 🔑 **Demo Accounts**: `op_console_1` / `pass123` (Console Operator), `sup_shift_1` / `pass123` (Shift Supervisor), `mgr_plant_1` / `pass123` (Plant Manager)
+- 🔑 **Demo Credentials**: `op_console_1` / `pass123` (Console Operator), `sup_shift_1` / `pass123` (Shift Supervisor), `mgr_plant_1` / `pass123` (Plant Manager)
 
 ### Step 4: Run Automated Verification Tests
 ```bash
 pytest -v
 # Verified Baseline: 232 / 232 tests passing (100% success rate)
 ```
-
-
----
-
-
-## 5. Where to Find Specific Information
-
-- **Adding a new Agent**: See [03_MULTI_AGENT_FOUNDATION.md](file:///d:/Chatboat/docs/03_MULTI_AGENT_FOUNDATION.md#5-guide-how-to-add-a-new-domain-agent).
-- **Model Mesh & Open-Source Routing**: See [09_LLM_GATEWAY.md](file:///d:/Chatboat/docs/09_LLM_GATEWAY.md).
-- **Bidirectional P2P Communication**: See [15_P2P_BIDIRECTIONAL_AGENT_COMMUNICATION.md](file:///d:/Chatboat/docs/15_P2P_BIDIRECTIONAL_AGENT_COMMUNICATION.md).
-- **Gemini Audio Voice Ingestion**: See [16_VOICE_TRANSCRIPTION_AND_INGESTION.md](file:///d:/Chatboat/docs/16_VOICE_TRANSCRIPTION_AND_INGESTION.md).
-- **AI Quality Gate Completeness Engine**: See [17_AI_QUALITY_GATE_ENGINE.md](file:///d:/Chatboat/docs/17_AI_QUALITY_GATE_ENGINE.md).
-- **Understanding HITL Approval Gates**: See [11_HITL_HUMAN_IN_THE_LOOP.md](file:///d:/Chatboat/docs/11_HITL_HUMAN_IN_THE_LOOP.md).
-- **Running Automated Tests**: See [14_TESTING_DEPLOYMENT_OPERATIONS.md](file:///d:/Chatboat/docs/14_TESTING_DEPLOYMENT_OPERATIONS.md).
